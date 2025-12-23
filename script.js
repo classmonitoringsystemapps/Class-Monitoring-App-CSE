@@ -1,3 +1,19 @@
+// 🔍 Filter Pending Makeup by Teacher Initial
+document.addEventListener("input", function (e) {
+  if (e.target.id !== "pendingTeacherSearch") return;
+
+  const query = e.target.value.toLowerCase();
+  const rows = document.querySelectorAll("#pendingTable tbody tr");
+
+  rows.forEach(row => {
+    const teacherCell = row.cells[3]; // Teacher column index
+    if (!teacherCell) return;
+
+    const teacherText = teacherCell.textContent.toLowerCase();
+    row.style.display = teacherText.includes(query) ? "" : "none";
+  });
+});
+
 /* script.js - frontend logic (FINAL FIXED VERSION) */
 
 /* ========== UPDATE THIS to your Web App URL (exec) ========== */
