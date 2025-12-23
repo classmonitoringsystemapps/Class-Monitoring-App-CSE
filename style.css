@@ -4,14 +4,17 @@
   --card:#fff;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
-  font-family:system-ui;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background:var(--bg);
 }
 
+/* ================= HEADER ================= */
 header{
   background:linear-gradient(90deg,var(--accent),#2a66d1);
   color:#fff;
@@ -19,6 +22,7 @@ header{
   padding:16px;
 }
 
+/* ================= CONTAINER ================= */
 .container{
   max-width:820px;
   margin:16px auto;
@@ -27,10 +31,26 @@ header{
   border-radius:10px;
 }
 
+/* ================= DASHBOARD ================= */
+.dashboard {
+  display: flex;
+  gap: 15px;
+  margin: 15px;
+}
+
+.card {
+  background: #f2f4f8;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* ================= CONTROLS ================= */
 .controls{
   display:flex;
   gap:10px;
   justify-content:center;
+  margin-bottom:10px;
 }
 
 button{
@@ -42,8 +62,14 @@ button{
   cursor:pointer;
 }
 
-.form{margin-top:12px}
-.hidden{display:none}
+/* ================= FORMS ================= */
+.form{
+  margin-top:12px;
+}
+
+.hidden{
+  display:none;
+}
 
 .grid{
   display:flex;
@@ -51,40 +77,47 @@ button{
   flex-wrap:wrap;
 }
 
-label{flex:1 1 240px;font-size:13px}
+label{
+  flex:1 1 240px;
+  font-size:13px;
+}
 
-input,select{
+input,
+select{
   width:100%;
   padding:10px;
   margin-top:6px;
   border-radius:8px;
   border:1px solid #ddd;
+  font-size:14px;
 }
 
+/* ================= FILTER INPUT ================= */
 .filter{
   padding:8px;
   margin-top:6px;
 }
 
+.filter::placeholder{
+  color:#888;
+  font-size:12px;
+}
+
+/* ================= SUBMIT ================= */
 .submit{
   background:#1b9a59;
   font-weight:bold;
   margin-top:10px;
 }
 
+/* ================= WATERMARK ================= */
 .watermark{
   font-size:13px;
   color:#777;
+  margin-top:6px;
 }
 
-footer{
-  text-align:center;
-  font-size:12px;
-  color:#666;
-  padding:12px;
-}
-
-/* ===== Pending Makeup List ===== */
+/* ================= TABLE ================= */
 .table-wrap{
   overflow-x:auto;
   margin-top:10px;
@@ -95,7 +128,8 @@ table{
   border-collapse:collapse;
 }
 
-th, td{
+th,
+td{
   border:1px solid #ddd;
   padding:8px;
   font-size:13px;
@@ -105,44 +139,167 @@ th{
   background:#f0f3f8;
   font-weight:600;
 }
+
+/* ================= FOOTER (COLORFUL + ANIMATED) ================= */
+footer{
+  margin-top:20px;
+  text-align:center;
+  padding:14px 10px;
+  background:linear-gradient(90deg,#317efb,#1b9a59,#ff9800);
+  border-radius:12px;
+  background-size:300% 300%;
+  animation:footerGradient 6s ease infinite;
+}
+
+footer small{
+  color:#ffffff;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:0.4px;
+}
+
+/* 🎓 DIU Icon + Text */
+footer small::before{
+  content:"🎓 DIU • ";
+  font-weight:700;
+  color:#ffe082;
+}
+
+/* ================= MOBILE RESPONSIVE ================= */
+@media (max-width:600px){
+
+  .grid{
+    flex-direction:column;
+  }
+
+  label{
+    flex:1 1 100%;
+  }
+
+  button{
+    width:100%;
+    font-size:16px;
+  }
+
+  input,
+  select{
+    font-size:16px;
+  }
+
+  table{
+    font-size:12px;
+  }
+
+  th,
+  td{
+    padding:6px;
+  }
+}
+
+/* ================= FOOTER ANIMATION ================= */
+@keyframes footerGradient{
+  0%   { background-position:0% 50%; }
+  50%  { background-position:100% 50%; }
+  100% { background-position:0% 50%; }
+}
+/* ================= ANIMATED HEADER TITLE ================= */
+
+/* Reduce header height */
+header{
+  padding: 10px 12px;
+}
+
+/* Main App Title */
+header h1{
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #ffeb3b, #ffffff, #00e5ff);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: titleGradient 5s ease infinite;
+}
+
+/* Subtitle */
+header .subtitle{
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e0f7fa;
+  letter-spacing: 0.4px;
+}
+
+/* Mobile optimization */
+@media (max-width:600px){
+  header h1{
+    font-size: 20px;
+  }
+
+  header .subtitle{
+    font-size: 12px;
+  }
+}
+
+/* Gradient animation for title */
+@keyframes titleGradient{
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ================= FIXED HEADER ================= */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Prevent content hiding under sticky header */
+main.container {
+  margin-top: 10px;
+}
+
+/* ================= DASHBOARD WIDTH REDUCE ================= */
+
 .dashboard {
-  display: flex;
-  gap: 15px;
-  margin: 15px 0;
+  max-width: 820px;        /* same as container */
+  margin: 12px auto;       /* center */
+  padding: 0 10px;
+  justify-content: space-between;
 }
-.card {
-  background: #f2f4f8;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
+
+/* Compact dashboard cards */
+.dashboard .card {
+  flex: 1;
+  min-width: 90px;
+  text-align: center;
+  font-size: 13px;
+  padding: 10px;
 }
+
+/* Numbers more visible */
+.dashboard span {
+  display: block;
+  font-size: 18px;
+  margin-top: 4px;
+  color: #317efb;
+}
+
+/* ================= MOBILE OPTIMIZATION ================= */
+
 @media (max-width: 600px) {
-  .grid {
-    flex-direction: column;
+  .dashboard {
+    gap: 8px;
   }
 
-  label {
-    flex: 1 1 100%;
-  }
-
-  button {
-    width: 100%;
-    font-size: 16px;
-  }
-
-  input, select {
-    font-size: 16px;
-  }
-
-  table {
+  .dashboard .card {
+    padding: 8px;
     font-size: 12px;
   }
 
-  th, td {
-    padding: 6px;
+  .dashboard span {
+    font-size: 16px;
   }
-.filter::placeholder {
-  color: #888;
-  font-size: 12px;
-}
 }
