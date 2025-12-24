@@ -1,3 +1,4 @@
+
 :root{
   --accent:#317efb;
   --bg:#f4f6f9;
@@ -20,6 +21,31 @@ header{
   color:#fff;
   text-align:center;
   padding:16px;
+}
+
+header h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+header .subtitle {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* Mobile optimization */
+@media (max-width: 600px) {
+  header {
+    padding: 10px;
+  }
+
+  header h1 {
+    font-size: 18px;
+  }
+
+  header .subtitle {
+    font-size: 12px;
+  }
 }
 
 /* ================= CONTAINER ================= */
@@ -248,6 +274,26 @@ header .subtitle{
   100% { background-position: 0% 50%; }
 }
 
+/* ===== Mobile Touch Improvements ===== */
+
+/* Bigger tap area for buttons */
+button {
+  min-height: 44px; /* mobile tap standard */
+}
+
+/* Smooth app-like transitions */
+button,
+input,
+select {
+  transition: all 0.2s ease;
+}
+
+/* Press animation */
+button:active {
+  transform: scale(0.97);
+}
+
+
 /* ================= FIXED HEADER ================= */
 
 header {
@@ -261,30 +307,49 @@ main.container {
   margin-top: 10px;
 }
 
-/* ================= DASHBOARD WIDTH REDUCE ================= */
+/* ================= DASHBOARD (CLEAN) ================= */
 
 .dashboard {
-  max-width: 820px;        /* same as container */
-  margin: 12px auto;       /* center */
-  padding: 0 10px;
+  max-width: 820px;
+  margin: 12px auto;
+  display: flex;
+  gap: 12px;
   justify-content: space-between;
+  padding: 0 10px;
 }
 
-/* Compact dashboard cards */
 .dashboard .card {
   flex: 1;
-  min-width: 90px;
+  min-width: 100px;
+  background: #f2f4f8;
+  padding: 12px;
+  border-radius: 10px;
   text-align: center;
   font-size: 13px;
-  padding: 10px;
+  font-weight: 600;
 }
 
-/* Numbers more visible */
 .dashboard span {
   display: block;
   font-size: 18px;
   margin-top: 4px;
-  color: #317efb;
+  color: var(--accent);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .dashboard {
+    gap: 8px;
+  }
+
+  .dashboard .card {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  .dashboard span {
+    font-size: 16px;
+  }
 }
 
 /* ================= MOBILE OPTIMIZATION ================= */
@@ -301,5 +366,29 @@ main.container {
 
   .dashboard span {
     font-size: 16px;
+  }
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.dashboard {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card {
+  min-width: 120px;
+  text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .card {
+    flex: 1 1 100px;
+    font-size: 13px;
   }
 }
