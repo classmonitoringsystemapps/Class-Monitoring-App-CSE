@@ -82,10 +82,13 @@
       </label>
     </div>
 
-    <label>
-      Reason
-      <input type="text" id="m_reason">
-    </label>
+    <label for="reason">Reason</label>
+        <select id="reason" required>
+        <option value="">Select reason</option>
+        <option value="Leave">Leave</option>
+        <option value="Sick">Sick</option>
+        <option value="Due to an Emergency">Due to an Emergency</option>
+   </select>
 
     <div class="watermark" id="m_teacher_watermark"></div>
     <button type="submit" class="submit">Submit Missed</button>
