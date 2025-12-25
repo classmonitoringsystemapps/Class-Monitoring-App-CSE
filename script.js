@@ -106,6 +106,11 @@ const TEACHERS = [
 
 const DEPARTMENTS = ["CSE", "Others"];
 
+/* ================= COURSE LIST ================= */
+const COURSES = [
+  "ACT211","ACT301","ACT322","ACT327","AOL101","BNS101","CSE112","CSE113","CSE114","CSE115","CSE121","CSE122","CSE123","CSE124","CSE131","CSE132","CSE133","CSE134","CSE135","CSE136","CSE212","CSE213","CSE214","CSE215","CSE216","CSE221","CSE222","CSE223","CSE224","CSE225","CSE226","CSE227","CSE228","CSE231","CSE232","CSE233","CSE234","CSE235","CSE236","CSE237","CSE311","CSE312","CSE313","CSE314","CSE315","CSE316","CSE317","CSE321","CSE322","CSE323","CSE324","CSE325","CSE326","CSE328","CSE331","CSE332","CSE333","CSE334","CSE335","CSE336","CSE411","CSE412","CSE413","CSE414","CSE415","CSE416","CSE417","CSE418","CSE421","CSE422","CSE423","CSE426","CSE427","CSE431","CSE444","CSE445","CSE446","CSE450","CSE498","CSE499","ECO237","ECO314","ECO321","ENG101","ENG102","ENG113","ENG123","GED121","GED131","GED201","GED216","GED321","MAT101","MAT102","MAT111","MAT121","MAT211","MAT223","PHY101","PHY102","PHY103","PHY113","PHY114","STA101","STA133","STA221","STA227"
+];
+
 const ROOMS = [
 "201","208","213","216","217","218","219","220","221","222","223","224",
 "302","303","304","305","306","307","318(A)","318(B)","320",
@@ -160,6 +165,8 @@ window.addEventListener("DOMContentLoaded", () => {
   populateSelect("k_teacher", TEACHERS);
   populateSelect("m_dept", DEPARTMENTS);
   populateSelect("k_dept", DEPARTMENTS);
+  populateSelect("m_course", COURSES);
+  populateSelect("k_course", COURSES);
   populateSelect("m_room", ROOMS);
   populateSelect("k_room", ROOMS);
   populateSelect("m_time", TIMES);
@@ -169,6 +176,8 @@ window.addEventListener("DOMContentLoaded", () => {
   addFilter("k_teacher_filter", "k_teacher");
   addFilter("m_dept_filter", "m_dept");
   addFilter("k_dept_filter", "k_dept");
+  addFilter("m_course_filter", "m_course");
+  addFilter("k_course_filter", "k_course");
   addFilter("m_room_filter", "m_room");
   addFilter("k_room_filter", "k_room");
   addFilter("m_time_filter", "m_time");
