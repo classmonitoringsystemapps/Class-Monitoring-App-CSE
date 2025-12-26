@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Class Monitoring App</title>
 
   <link rel="manifest" href="manifest.json">
@@ -26,6 +26,7 @@
 
 <main class="container">
 
+  <!-- ================= BUTTON CONTROLS ================= -->
   <div class="controls">
     <button id="btn-missed">Missed Class Entry</button>
     <button id="btn-makeup">Makeup Class Entry</button>
@@ -39,21 +40,21 @@
     <div class="grid">
       <label>
         Date
-        <input type="date" id="m_date">
+        <input type="date" id="m_date" required>
       </label>
 
       <label>
         Department
         <input type="text" id="m_dept_filter" class="filter" placeholder="Search department...">
-        <select id="m_dept"></select>
+        <select id="m_dept" required></select>
       </label>
     </div>
 
     <div class="grid">
       <label>
-        Course Code & Title
+        Course Code
         <input type="text" id="m_course_filter" class="filter" placeholder="Search course...">
-        <select id="m_course" size="6"></select>
+        <select id="m_course" size="6" required></select>
       </label>
 
       <label>
@@ -72,25 +73,22 @@
 
       <label>
         Teacher Initial
-        <input
-          type="text"
-          id="m_teacher_filter"
-          class="filter"
-          placeholder="Search teacher initial..."
-        >
-        <select id="m_teacher" size="6"></select>
+        <input type="text" id="m_teacher_filter" class="filter" placeholder="Search teacher...">
+        <select id="m_teacher" size="6" required></select>
       </label>
     </div>
 
- <select id="m_reason" required>
-  <option value="">Select reason</option>
-  <option value="Leave">Leave</option>
-  <option value="Sick">Sick</option>
-  <option value="Due to an Emergency">Due to an Emergency</option>
-</select>
+    <label>
+      Reason
+      <select id="m_reason" required>
+        <option value="">Select reason</option>
+        <option value="Leave">Leave</option>
+        <option value="Sick">Sick</option>
+        <option value="Due to an Emergency">Due to an Emergency</option>
+      </select>
+    </label>
 
-    <div class="watermark" id="m_teacher_watermark"></div>
-    <button type="submit" class="submit">Submit Missed</button>
+    <button type="submit" class="submit">Submit Missed Class</button>
   </form>
 
   <!-- ================= MAKEUP CLASS ================= -->
@@ -100,45 +98,40 @@
     <div class="grid">
       <label>
         Schedule Date
-        <input type="date" id="k_schedule">
+        <input type="date" id="k_schedule" required>
       </label>
 
       <label>
         Department
         <input type="text" id="k_dept_filter" class="filter" placeholder="Search department...">
-        <select id="k_dept"></select>
+        <select id="k_dept" required></select>
       </label>
     </div>
 
     <div class="grid">
       <label>
-        Course Code & Title
+        Course Code
         <input type="text" id="k_course_filter" class="filter" placeholder="Search course...">
-        <select id="k_course" size="6"></select>
+        <select id="k_course" size="6" required></select>
       </label>
 
       <label>
         Teacher Initial
-        <input
-          type="text"
-          id="k_teacher_filter"
-          class="filter"
-          placeholder="Search teacher initial..."
-        >
-        <select id="k_teacher" size="6"></select>
+        <input type="text" id="k_teacher_filter" class="filter" placeholder="Search teacher...">
+        <select id="k_teacher" size="6" required></select>
       </label>
     </div>
 
     <div class="grid">
       <label>
         Makeup Date
-        <input type="date" id="k_date">
+        <input type="date" id="k_date" required>
       </label>
 
       <label>
         Makeup Time
         <input type="text" id="k_time_filter" class="filter">
-        <select id="k_time" size="6"></select>
+        <select id="k_time" size="6" required></select>
       </label>
     </div>
 
@@ -146,7 +139,7 @@
       <label>
         Makeup Room
         <input type="text" id="k_room_filter" class="filter">
-        <select id="k_room" size="6"></select>
+        <select id="k_room" size="6" required></select>
       </label>
 
       <label>
@@ -160,11 +153,8 @@
 
     <label>
       Remarks
-      <input
-        type="text"
-        id="k_remarks"
-        placeholder="If Completed provide class attendance link / online class recording link"
-      >
+      <input type="text" id="k_remarks"
+        placeholder="If completed, provide attendance / recording link">
     </label>
 
     <button type="submit" class="submit">Save Makeup Class</button>
@@ -173,12 +163,14 @@
   <!-- ================= PENDING MAKEUP ================= -->
   <div id="pendingSection" class="form hidden">
     <h2>Pending Makeup Classes</h2>
-     <input
-  type="text"
-  id="pendingTeacherSearch"
-  class="filter"
-  placeholder="Search by Teacher Initial..."
->
+
+    <input
+      type="text"
+      id="pendingTeacherSearch"
+      class="filter"
+      placeholder="Search by Teacher Initial..."
+    >
+
     <div class="table-wrap">
       <table id="pendingTable">
         <thead>
@@ -190,6 +182,7 @@
             <th>Makeup Date</th>
             <th>Time</th>
             <th>Room</th>
+            <th>Status</th>
             <th>Remarks</th>
           </tr>
         </thead>
@@ -204,7 +197,7 @@
   <small>Built for Daffodil International University – SAROWER</small>
 </footer>
 
-<!-- ✅ SCRIPT LOAD ORDER (VERY IMPORTANT) -->
+<!-- ================= SCRIPT ================= -->
 <script src="script.js"></script>
 
 <script>
