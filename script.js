@@ -255,15 +255,20 @@ function loadPendingMakeup() {
             </select>
           </td>
           <td>
-            <input id="remarks_${row.row}" value="${row.remarks || ""}">
-            <button onclick="updateMakeup(${row.row})">Update</button>
-          </td>
-        `;
+           <input
+           type="text"
+           id="remarks_${row.row}"
+           value="${row.remarks || ""}"
+           placeholder="Provide class attendance link"
+         >
+         <br>
+         <button onclick="updateMakeup(${row.row})">Update</button>
+        </td>       
+     `;
         tbody.appendChild(tr);
       });
     });
 }
-
 function updateMakeup(row) {
   const status = document.getElementById(`status_${row}`).value;
   const remarks = document.getElementById(`remarks_${row}`).value;
@@ -302,3 +307,4 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./service-worker.js");
   });
 }
+
