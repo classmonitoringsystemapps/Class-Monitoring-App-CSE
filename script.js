@@ -1,6 +1,6 @@
 /* ================= CONFIG ================= */
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbxjWdv5qGrlhkiGRRoucKL5CnnLyX--fZGW38DXyjsC-_rMB8bpN2dB3IOq8yx-tKF2UQ/exec";
+  "https://script.google.com/macros/s/AKfycbygjo4Xo1gOVl5gFF_vgo908k0uCl9d-s1ZGwnKLgaX1w4ICuGdjgD2BhPUWBqmTz4Zug/exec";
 
 /* ================= DATE FORMAT (BD) ================= */
 function formatBDDateTimeFromInput(dateValue) {
@@ -307,4 +307,5 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./service-worker.js");
   });
 }
+
 
