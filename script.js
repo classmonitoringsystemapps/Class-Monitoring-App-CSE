@@ -1,17 +1,36 @@
-/* ================= CONFIG ================= */
+// 🔍 Filter Pending Makeup by Teacher Initial
+document.addEventListener("input", function (e) {
+  if (e.target.id !== "pendingTeacherSearch") return;
+
+  const query = e.target.value.toLowerCase();
+  const rows = document.querySelectorAll("#pendingTable tbody tr");
+
+  rows.forEach(row => {
+    const teacherCell = row.cells[3]; // Teacher column index
+    if (!teacherCell) return;
+
+    const teacherText = teacherCell.textContent.toLowerCase();
+    row.style.display = teacherText.includes(query) ? "" : "none";
+  });
+});
+
+/* script.js - frontend logic (FINAL FIXED VERSION) */
+
+/* ========== UPDATE THIS to your Web App URL (exec) ========== */
 const API_URL =
   "https://script.google.com/macros/s/AKfycbygjo4Xo1gOVl5gFF_vgo908k0uCl9d-s1ZGwnKLgaX1w4ICuGdjgD2BhPUWBqmTz4Zug/exec";
-
-/* ================= DATE FORMAT (BD) ================= */
 function formatBDDateTimeFromInput(dateValue) {
   if (!dateValue) return "";
 
+  // Get current Bangladesh time
   const nowBD = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
   );
 
+  // Selected date
   const selectedDate = new Date(dateValue);
 
+  // Combine selected DATE + current BD TIME
   const finalDate = new Date(
     selectedDate.getFullYear(),
     selectedDate.getMonth(),
@@ -21,20 +40,17 @@ function formatBDDateTimeFromInput(dateValue) {
     0
   );
 
-  return finalDate
-    .toLocaleString("en-GB", {
-      timeZone: "Asia/Dhaka",
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true
-    })
-    .replace(/(\d{4})/, "$1,");
+  return finalDate.toLocaleString("en-GB", {
+    timeZone: "Asia/Dhaka",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  }).replace(/(\d{4})/, "$1,");
 }
-
-/* ================= MASTER LISTS ================= */
+/* ---------- MASTER LISTS ---------- */
 const TEACHERS = [
 "Dr. Sheak Rashed Haider Noori (SRH)","Dr. S.M Aminul Haque (SMAH)","Dr. Arif Mahmud (AM)",
 "Dr. Md. Fokhray Hossain (MFH)","Professor Dr. Md. Adnan Kiber (MAK)","Professor Dr. Fernaz Narin Nur (FNN)",
@@ -115,16 +131,17 @@ const TIMES = [
   "4:00 PM - 5:30 PM"
 ];
 
-/* ================= DROPDOWN HELPERS ================= */
+
+/* ---------- HELPERS ---------- */
 function populateSelect(id, list) {
   const sel = document.getElementById(id);
   if (!sel) return;
   sel.innerHTML = "";
   list.forEach(v => {
-    const opt = document.createElement("option");
-    opt.value = v;
-    opt.textContent = v;
-    sel.appendChild(opt);
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = v;
+    sel.appendChild(o);
   });
 }
 
@@ -141,7 +158,7 @@ function addFilter(filterId, selectId) {
   });
 }
 
-/* ================= INIT ================= */
+/* ---------- LOAD DROPDOWNS ON PAGE LOAD ---------- */
 window.addEventListener("DOMContentLoaded", () => {
   populateSelect("m_teacher", TEACHERS);
   populateSelect("k_teacher", TEACHERS);
@@ -156,14 +173,20 @@ window.addEventListener("DOMContentLoaded", () => {
 
   addFilter("m_teacher_filter", "m_teacher");
   addFilter("k_teacher_filter", "k_teacher");
+  addFilter("m_dept_filter", "m_dept");
+  addFilter("k_dept_filter", "k_dept");
   addFilter("m_course_filter", "m_course");
   addFilter("k_course_filter", "k_course");
+  addFilter("m_room_filter", "m_room");
+  addFilter("k_room_filter", "k_room");
+  addFilter("m_time_filter", "m_time");
+  addFilter("k_time_filter", "k_time");
 
   loadDashboard();
   loadPendingMakeup();
 });
 
-/* ================= POST HELPER ================= */
+/* ---------- POST HELPER ---------- */
 async function postForm(payload) {
   const params = new URLSearchParams(payload);
   const res = await fetch(API_URL, { method: "POST", body: params });
@@ -171,75 +194,121 @@ async function postForm(payload) {
 }
 
 /* ================= MISSED CLASS ================= */
-document.getElementById("missedForm").addEventListener("submit", async e => {
-  e.preventDefault();
+document
+  .getElementById("missedForm")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  const payload = {
-    action: "save_missed",
-    date: formatBDDateTimeFromInput(m_date.value),
-    department: m_dept.value,
-    course: m_course.value,
-    room: m_room.value,
-    timeSlot: m_time.value,
-    teacherInitial: m_teacher.value,
-    reason: m_reason.value
-  };
+    const payload = {
+      action: "save_missed",
+      date: formatBDDateTimeFromInput(m_date.value),
+      department: m_dept.value.trim(),
+      course: m_course.value.trim(),
+      room: m_room.value,
+      timeSlot: m_time.value,
+      teacherInitial: m_teacher.value,
+      reason: m_reason.value.trim()
+    };
 
-  const res = await postForm(payload);
-
-  if (res.status === "success") {
-    alert("Missed Class Saved!");
-    e.target.reset();
-    loadDashboard();
-  } else {
-    alert(res.message || "Access denied");
-  }
-});
+    const res = await postForm(payload);
+    if (res.status === "success") {
+      alert("Missed Class Saved!");
+      this.reset();
+      loadDashboard();
+    } else {
+      alert("Error saving missed class");
+    }
+  });
 
 /* ================= MAKEUP CLASS ================= */
-document.getElementById("makeupForm").addEventListener("submit", async e => {
-  e.preventDefault();
+document
+  .getElementById("makeupForm")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  const payload = {
-    action: "save_makeup",
-    scheduleDate: formatBDDateTimeFromInput(k_schedule.value),
-    department: k_dept.value,
-    course: k_course.value,
-    teacherInitial: k_teacher.value,
-    makeupDate: formatBDDateTimeFromInput(k_date.value),
-    makeupTime: k_time.value,
-    makeupRoom: k_room.value,
-    status: k_status.value,
-    remarks: k_remarks.value
-  };
+    const payload = {
+      action: "save_makeup",
+      scheduleDate: formatBDDateTimeFromInput(k_schedule.value),
+      department: k_dept.value.trim(),
+      course: k_course.value.trim(),
+      teacherInitial: k_teacher.value,
+      makeupDate: formatBDDateTimeFromInput(k_date.value),
+      makeupTime: k_time.value,
+      makeupRoom: k_room.value,
+      status: k_status.value,
+      remarks: k_remarks.value.trim()
+    };
 
-  const res = await postForm(payload);
+    if (
+      !payload.scheduleDate ||
+      !payload.department ||
+      !payload.course ||
+      !payload.teacherInitial ||
+      !payload.makeupDate ||
+      !payload.makeupTime ||
+      !payload.makeupRoom
+    ) {
+      alert("Please fill all required fields");
+      return;
+    }
 
-  if (res.status === "success") {
-    alert("Makeup Class Saved!");
-    e.target.reset();
-    loadPendingMakeup();
-    loadDashboard();
-  } else {
-    alert("Save failed");
-  }
-});
+    const res = await postForm(payload);
+    if (res.status === "success") {
+      alert("Makeup Class Saved!");
+      this.reset();
+      loadPendingMakeup();
+      loadDashboard();
+    } else {
+      alert("Makeup save failed");
+      console.error(res);
+    }
+  });
 
-/* ================= PENDING MAKEUP ================= */
+/* ================= PENDING LIST ================= */
+function updateMakeup(row) {
+  const status = document.getElementById(`status_${row}`).value;
+  const remarks = document.getElementById(`remarks_${row}`).value;
+
+  const url =
+    `${API_URL}?action=update_makeup` +
+    `&row=${row}` +
+    `&status=${encodeURIComponent(status)}` +
+    `&remarks=${encodeURIComponent(remarks)}`;
+
+  fetch(url)
+    .then(r => r.json())
+    .then(res => {
+      if (res.status === "success") {
+        alert("Updated successfully");
+        loadPendingMakeup();
+        loadDashboard();
+      } else {
+        alert("Update failed: " + res.message);
+      }
+    })
+    .catch(err => {
+      alert("Network error");
+      console.error(err);
+    });
+}
 function loadPendingMakeup() {
   fetch(`${API_URL}?action=get_pending_makeup`)
     .then(r => r.json())
     .then(res => {
       const tbody = document.querySelector("#pendingTable tbody");
+      if (!tbody) return;
+
       tbody.innerHTML = "";
 
       if (!res.data || res.data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9">No pending classes</td></tr>`;
+        tbody.innerHTML =
+          `<tr><td colspan="10">No pending makeup classes</td></tr>`;
         return;
       }
 
       res.data.forEach(row => {
         const tr = document.createElement("tr");
+
         tr.innerHTML = `
           <td>${row.scheduleDate}</td>
           <td>${row.department}</td>
@@ -248,36 +317,44 @@ function loadPendingMakeup() {
           <td>${row.makeupDate}</td>
           <td>${row.makeupTime}</td>
           <td>${row.makeupRoom}</td>
+
+          <!-- ✅ STATUS COLUMN -->
           <td>
             <select id="status_${row.row}">
               <option value="Pending" ${row.status === "Pending" ? "selected" : ""}>Pending</option>
               <option value="Completed" ${row.status === "Completed" ? "selected" : ""}>Completed</option>
             </select>
           </td>
+
+          <!-- ✅ REMARKS -->
           <td>
-           <input
-           type="text"
-           id="remarks_${row.row}"
-           value="${row.remarks || ""}"
-           placeholder="Provide class attendance link"
-         >
-         <br>
-         <button onclick="updateMakeup(${row.row})">Update</button>
-        </td>       
-     `;
+            <input type="text" id="remarks_${row.row}" value="${row.remarks || ""}">
+            <br>
+            <button onclick="updateMakeup(${row.row})">Update</button>
+          </td>
+        `;
+
         tbody.appendChild(tr);
       });
     });
 }
-function updateMakeup(row) {
-  const status = document.getElementById(`status_${row}`).value;
+/* ================= UPDATE STATUS ================= */
+function updateStatus(row, scheduleDate) {
   const remarks = document.getElementById(`remarks_${row}`).value;
-
-  fetch(`${API_URL}?action=update_makeup&row=${row}&status=${status}&remarks=${encodeURIComponent(remarks)}`)
+  fetch(
+    `${API_URL}?action=update_makeup&row=${row}&status=Completed&remarks=${encodeURIComponent(
+      remarks
+    )}&scheduleDate=${scheduleDate}`
+  )
     .then(r => r.json())
-    .then(() => {
-      loadPendingMakeup();
-      loadDashboard();
+    .then(r => {
+      if (r.status === "success") {
+        alert("Updated");
+        loadPendingMakeup();
+        loadDashboard();
+      } else {
+        alert("Update failed");
+      }
     });
 }
 
@@ -292,20 +369,17 @@ function loadDashboard() {
     });
 }
 
-/* ================= SEARCH FILTER ================= */
-document.addEventListener("input", e => {
-  if (e.target.id !== "pendingTeacherSearch") return;
-  const q = e.target.value.toLowerCase();
-  document.querySelectorAll("#pendingTable tbody tr").forEach(r => {
-    r.style.display = r.cells[3].innerText.toLowerCase().includes(q) ? "" : "none";
-  });
-});
+/* ================= SERVICE WORKER REGISTRATION ================= */
 
-/* ================= SERVICE WORKER ================= */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js");
+    navigator.serviceWorker
+      .register("./service-worker.js")
+      .then(() => {
+        console.log("✅ Service Worker registered successfully");
+      })
+      .catch(err => {
+        console.error("❌ Service Worker registration failed:", err);
+      });
   });
 }
-
-
