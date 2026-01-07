@@ -411,4 +411,99 @@ function loadPendingMakeup() {
       res.data.forEach(row => {
         const tr = document.createElement("tr");
 
-        tr.innerHTML =
+        tr.innerHTML = `
+          <td>${row.scheduleDate}</td>
+          <td>${row.department}</td>
+          <td>${row.course}</td>
+          <td>${row.teacher}</td>
+          <td>${row.makeupDate}</td>
+          <td>${row.makeupTime}</td>
+          <td>${row.makeupRoom}</td>
+          <td>
+            <select id="status_${row.row}">
+              <option value="Pending" ${row.status === "Pending" ? "selected" : ""}>Pending</option>
+              <option value="Completed" ${row.status === "Completed" ? "selected" : ""}>Completed</option>
+            </select>
+          </td>
+          <td>
+            <input
+              type="text"
+              id="remarks_${row.row}"
+              value="${row.remarks || ""}"
+              placeholder="Provide class attendance link"
+            >
+            <br>
+            <button onclick="updateMakeup(${row.row})">Update</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    });
+}
+
+/* =========================================================
+   FILTER PENDING BY TEACHER
+========================================================= */
+
+document.addEventListener("input", e => {
+  if (e.target.id !== "pendingTeacherSearch") return;
+
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll("#pendingTable tbody tr").forEach(tr => {
+    const cell = tr.cells[3];
+    tr.style.display = cell && cell.textContent.toLowerCase().includes(q)
+      ? ""
+      : "none";
+  });
+});
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+window.addEventListener("DOMContentLoaded", () => {
+  populateSelect("m_teacher", TEACHERS);
+  populateSelect("k_teacher", TEACHERS);
+  populateSelect("m_dept", DEPARTMENTS);
+  populateSelect("k_dept", DEPARTMENTS);
+  populateSelect("m_course", COURSES);
+  populateSelect("k_course", COURSES);
+  populateSelect("m_room", ROOMS);
+  populateSelect("k_room", ROOMS);
+  populateSelect("m_time", TIMES);
+  populateSelect("k_time", TIMES);
+
+  addFilter("m_teacher_filter", "m_teacher");
+  addFilter("k_teacher_filter", "k_teacher");
+  addFilter("m_dept_filter", "m_dept");
+  addFilter("k_dept_filter", "k_dept");
+  addFilter("m_course_filter", "m_course");
+  addFilter("k_course_filter", "k_course");
+  addFilter("m_room_filter", "m_room");
+  addFilter("k_room_filter", "k_room");
+  addFilter("m_time_filter", "m_time");
+  addFilter("k_time_filter", "k_time");
+
+  loadDashboard();
+  loadPendingMakeup();
+});
+
+/* =========================================================
+   SERVICE WORKER
+========================================================= */
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("./service-worker.js")
+      .then(() => console.log("✅ Service Worker registered"))
+      .catch(err => console.error("❌ SW error:", err));
+  });
+}
+window.addEventListener("load", () => {
+  const splash = document.getElementById("app-splash");
+  if (splash) {
+    setTimeout(() => splash.remove(), 2000);
+  }
+});
