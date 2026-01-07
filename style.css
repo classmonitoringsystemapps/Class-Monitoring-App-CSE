@@ -1,3 +1,4 @@
+
 :root{
   --accent:#317efb;
   --bg:#f4f6f9;
@@ -350,45 +351,129 @@ main.container {
     font-size: 16px;
   }
 }
+/* TEMPORARY: Hide Total Missed card */
+.dashboard .total-missed {
+  display: none !important;
+}
+/* ================= DARK MODE ================= */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #0f172a;
+    color: #e5e7eb;
+  }
 
-/* ================= MOBILE OPTIMIZATION ================= */
+  header {
+    background: #020617;
+    color: #f8fafc;
+  }
 
-@media (max-width: 600px) {
-  .dashboard {
-    gap: 8px;
+  .form,
+  .card,
+  table {
+    background: #020617;
+    color: #e5e7eb;
+  }
+
+  input,
+  select,
+  button {
+    background: #020617;
+    color: #e5e7eb;
+    border: 1px solid #334155;
   }
 
   .dashboard .card {
-    padding: 8px;
-    font-size: 12px;
+    background: #020617;
+    box-shadow: none;
   }
 
-  .dashboard span {
-    font-size: 16px;
+  table th {
+    background: #020617;
   }
 }
 
-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+/* ================= LOGO ANIMATION ================= */
 
-.dashboard {
+.logo-wrap {
+  display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-.card {
-  min-width: 120px;
-  text-align: center;
+.app-logo {
+  width: 72px;
+  height: 72px;
+  animation: logoEnter 0.8s ease-out,
+             logoPulse 3s ease-in-out infinite;
 }
 
-/* Mobile */
-@media (max-width: 600px) {
-  .card {
-    flex: 1 1 100px;
-    font-size: 13px;
+/* Entry animation */
+@keyframes logoEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
+/* Soft breathing animation */
+@keyframes logoPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .app-logo {
+    animation: none;
+  }
+}
+/* ================= PWA SPLASH SCREEN ================= */
+
+#app-splash {
+  position: fixed;
+  inset: 0;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: splashFadeOut 0.6s ease forwards;
+  animation-delay: 1.2s;
+}
+
+#app-splash img {
+  width: 120px;
+  height: 120px;
+  animation: logoPulse 1.2s ease-in-out infinite;
+}
+
+#app-splash p {
+  margin-top: 14px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  color: #e5e7eb;
+}
+
+/* Logo animation */
+@keyframes logoPulse {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+/* Fade out splash */
+@keyframes splashFadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
