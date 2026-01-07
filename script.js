@@ -22,10 +22,58 @@ const API_URL =
 function formatBDDateTimeFromInput(dateValue) {
   if (!dateValue) return "";
 
+/* ========= DASHBOARD COUNTER ANIMATION (SAFE) ========= */
+function animateCount(el, to) {
+  if (!el) return;
+  let start = 0;
+  const duration = 400; // ms
+  const stepTime = 20;
+  const steps = Math.ceil(duration / stepTime);
+  const increment = Math.max(1, Math.floor(to / steps));
+
+  const timer = setInterval(() => {
+    start += increment;
+    if (start >= to) {
+      el.innerText = to;
+      clearInterval(timer);
+    } else {
+      el.innerText = start;
+    }
+  }, stepTime);
+}
+
   // Get current Bangladesh time
   const nowBD = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
   );
+/* ================= DASHBOARD ANIMATION ================= */
+function animateCount(el, to) {
+  if (!el) return;
+  let start = 0;
+  const duration = 400;
+  const stepTime = 20;
+  const steps = Math.ceil(duration / stepTime);
+  const increment = Math.max(1, Math.floor(to / steps));
+
+  const timer = setInterval(() => {
+    start += increment;
+    if (start >= to) {
+      el.innerText = to;
+      clearInterval(timer);
+    } else {
+      el.innerText = start;
+    }
+  }, stepTime);
+}
+function loadDashboardAnimated(d) {
+  const total = document.getElementById("totalMissed");
+  const completed = document.getElementById("completed");
+  const pending = document.getElementById("pending");
+
+  if (total) animateCount(total, d.totalMissed || 0);
+  if (completed) animateCount(completed, d.completed || 0);
+  if (pending) animateCount(pending, d.pending || 0);
+}
 
   // Selected date
   const selectedDate = new Date(dateValue);
@@ -131,11 +179,49 @@ const TIMES = [
   "4:00 PM - 5:30 PM"
 ];
 
+/* =========================================================
+   DATE FORMATTER (BD TIME)
+========================================================= */
 
-/* ---------- HELPERS ---------- */
+function formatBDDateTimeFromInput(dateValue) {
+  if (!dateValue) return "";
+
+  const nowBD = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
+  );
+
+  const d = new Date(dateValue);
+
+  const finalDate = new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    nowBD.getHours(),
+    nowBD.getMinutes(),
+    0
+  );
+
+  return finalDate
+    .toLocaleString("en-GB", {
+      timeZone: "Asia/Dhaka",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    })
+    .replace(/(\d{4})/, "$1,");
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
 function populateSelect(id, list) {
   const sel = document.getElementById(id);
   if (!sel) return;
+
   sel.innerHTML = "";
   list.forEach(v => {
     const o = document.createElement("option");
@@ -158,124 +244,143 @@ function addFilter(filterId, selectId) {
   });
 }
 
-/* ---------- LOAD DROPDOWNS ON PAGE LOAD ---------- */
-window.addEventListener("DOMContentLoaded", () => {
-  populateSelect("m_teacher", TEACHERS);
-  populateSelect("k_teacher", TEACHERS);
-  populateSelect("m_dept", DEPARTMENTS);
-  populateSelect("k_dept", DEPARTMENTS);
-  populateSelect("m_course", COURSES);
-  populateSelect("k_course", COURSES);
-  populateSelect("m_room", ROOMS);
-  populateSelect("k_room", ROOMS);
-  populateSelect("m_time", TIMES);
-  populateSelect("k_time", TIMES);
-
-  addFilter("m_teacher_filter", "m_teacher");
-  addFilter("k_teacher_filter", "k_teacher");
-  addFilter("m_dept_filter", "m_dept");
-  addFilter("k_dept_filter", "k_dept");
-  addFilter("m_course_filter", "m_course");
-  addFilter("k_course_filter", "k_course");
-  addFilter("m_room_filter", "m_room");
-  addFilter("k_room_filter", "k_room");
-  addFilter("m_time_filter", "m_time");
-  addFilter("k_time_filter", "k_time");
-
-  loadDashboard();
-  loadPendingMakeup();
-});
-
-/* ---------- POST HELPER ---------- */
 async function postForm(payload) {
   const params = new URLSearchParams(payload);
   const res = await fetch(API_URL, { method: "POST", body: params });
   return await res.json();
 }
 
-/* ================= MISSED CLASS ================= */
-document
-  .getElementById("missedForm")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
+/* =========================================================
+   DASHBOARD (ANIMATED)
+========================================================= */
 
-    const payload = {
-      action: "save_missed",
-      date: formatBDDateTimeFromInput(m_date.value),
-      department: m_dept.value.trim(),
-      course: m_course.value.trim(),
-      room: m_room.value,
-      timeSlot: m_time.value,
-      teacherInitial: m_teacher.value,
-      reason: m_reason.value.trim()
-    };
+function animateCount(el, to) {
+  if (!el) return;
 
-    const res = await postForm(payload);
-    if (res.status === "success") {
-      alert("Missed Class Saved!");
-      this.reset();
-      loadDashboard();
-    } else {
-      alert("Error saving missed class");
+  let start = 0;
+  const step = Math.max(Math.ceil(to / 30), 1);
+
+  const timer = setInterval(() => {
+    start += step;
+    if (start >= to) {
+      start = to;
+      clearInterval(timer);
     }
-  });
+    el.innerText = start;
+  }, 20);
+}
 
-/* ================= MAKEUP CLASS ================= */
-document
-  .getElementById("makeupForm")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
+function loadDashboard() {
+  fetch(`${API_URL}?action=get_dashboard`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.status !== "success") return;
 
-    const payload = {
-      action: "save_makeup",
-      scheduleDate: formatBDDateTimeFromInput(k_schedule.value),
-      department: k_dept.value.trim(),
-      course: k_course.value.trim(),
-      teacherInitial: k_teacher.value,
-      makeupDate: formatBDDateTimeFromInput(k_date.value),
-      makeupTime: k_time.value,
-      makeupRoom: k_room.value,
-      status: k_status.value,
-      remarks: k_remarks.value.trim()
-    };
+      animateCount(
+        document.getElementById("totalMissed"),
+        d.totalMissed || 0
+      );
 
-    if (
-      !payload.scheduleDate ||
-      !payload.department ||
-      !payload.course ||
-      !payload.teacherInitial ||
-      !payload.makeupDate ||
-      !payload.makeupTime ||
-      !payload.makeupRoom
-    ) {
-      alert("Please fill all required fields");
-      return;
-    }
+      animateCount(
+        document.getElementById("completed"),
+        d.completed || 0
+      );
 
-    const res = await postForm(payload);
-    if (res.status === "success") {
-      alert("Makeup Class Saved!");
-      this.reset();
-      loadPendingMakeup();
-      loadDashboard();
-    } else {
-      alert("Makeup save failed");
-      console.error(res);
-    }
-  });
+      animateCount(
+        document.getElementById("pending"),
+        d.pending || 0
+      );
+    })
+    .catch(err => console.error("Dashboard error:", err));
+}
 
-/* ================= PENDING LIST ================= */
+/* =========================================================
+   MISSED CLASS
+========================================================= */
+
+document.getElementById("missedForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const payload = {
+    action: "save_missed",
+    date: formatBDDateTimeFromInput(m_date.value),
+    department: m_dept.value.trim(),
+    course: m_course.value.trim(),
+    room: m_room.value,
+    timeSlot: m_time.value,
+    teacherInitial: m_teacher.value,
+    reason: m_reason.value.trim()
+  };
+
+  const res = await postForm(payload);
+
+  if (res.status === "success") {
+    alert("Missed Class Saved!");
+    e.target.reset();
+    loadDashboard();
+  } else {
+    alert(res.message || "Error saving missed class");
+  }
+});
+
+/* =========================================================
+   MAKEUP CLASS
+========================================================= */
+
+document.getElementById("makeupForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const payload = {
+    action: "save_makeup",
+    scheduleDate: formatBDDateTimeFromInput(k_schedule.value),
+    department: k_dept.value.trim(),
+    course: k_course.value.trim(),
+    teacherInitial: k_teacher.value,
+    makeupDate: formatBDDateTimeFromInput(k_date.value),
+    makeupTime: k_time.value,
+    makeupRoom: k_room.value,
+    status: k_status.value,
+    remarks: k_remarks.value.trim()
+  };
+
+  if (
+    !payload.scheduleDate ||
+    !payload.department ||
+    !payload.course ||
+    !payload.teacherInitial ||
+    !payload.makeupDate ||
+    !payload.makeupTime ||
+    !payload.makeupRoom
+  ) {
+    alert("Please fill all required fields");
+    return;
+  }
+
+  const res = await postForm(payload);
+
+  if (res.status === "success") {
+    alert("Makeup Class Saved!");
+    e.target.reset();
+    loadPendingMakeup();
+    loadDashboard();
+  } else {
+    alert("Makeup save failed");
+  }
+});
+
+/* =========================================================
+   PENDING MAKEUP LIST
+========================================================= */
+
 function updateMakeup(row) {
   const status = document.getElementById(`status_${row}`).value;
   const remarks = document.getElementById(`remarks_${row}`).value;
 
-  const url =
-    `${API_URL}?action=update_makeup` +
-    `&row=${row}` +
-    `&status=${encodeURIComponent(status)}` +
-    `&remarks=${encodeURIComponent(remarks)}`;
-
-  fetch(url)
+  fetch(
+    `${API_URL}?action=update_makeup&row=${row}&status=${encodeURIComponent(
+      status
+    )}&remarks=${encodeURIComponent(remarks)}`
+  )
     .then(r => r.json())
     .then(res => {
       if (res.status === "success") {
@@ -283,14 +388,11 @@ function updateMakeup(row) {
         loadPendingMakeup();
         loadDashboard();
       } else {
-        alert("Update failed: " + res.message);
+        alert(res.message || "Update failed");
       }
-    })
-    .catch(err => {
-      alert("Network error");
-      console.error(err);
     });
 }
+
 function loadPendingMakeup() {
   fetch(`${API_URL}?action=get_pending_makeup`)
     .then(r => r.json())
@@ -302,84 +404,11 @@ function loadPendingMakeup() {
 
       if (!res.data || res.data.length === 0) {
         tbody.innerHTML =
-          `<tr><td colspan="10">No pending makeup classes</td></tr>`;
+          `<tr><td colspan="9">No pending makeup classes</td></tr>`;
         return;
       }
 
       res.data.forEach(row => {
         const tr = document.createElement("tr");
 
-        tr.innerHTML = `
-          <td>${row.scheduleDate}</td>
-          <td>${row.department}</td>
-          <td>${row.course}</td>
-          <td>${row.teacher}</td>
-          <td>${row.makeupDate}</td>
-          <td>${row.makeupTime}</td>
-          <td>${row.makeupRoom}</td>
-
-          <!-- ✅ STATUS COLUMN -->
-          <td>
-            <select id="status_${row.row}">
-              <option value="Pending" ${row.status === "Pending" ? "selected" : ""}>Pending</option>
-              <option value="Completed" ${row.status === "Completed" ? "selected" : ""}>Completed</option>
-            </select>
-          </td>
-
-          <!-- ✅ REMARKS -->
-          <td>
-            <input type="text" id="remarks_${row.row}" value="${row.remarks || ""}">
-            <br>
-            <button onclick="updateMakeup(${row.row})">Update</button>
-          </td>
-        `;
-
-        tbody.appendChild(tr);
-      });
-    });
-}
-/* ================= UPDATE STATUS ================= */
-function updateStatus(row, scheduleDate) {
-  const remarks = document.getElementById(`remarks_${row}`).value;
-  fetch(
-    `${API_URL}?action=update_makeup&row=${row}&status=Completed&remarks=${encodeURIComponent(
-      remarks
-    )}&scheduleDate=${scheduleDate}`
-  )
-    .then(r => r.json())
-    .then(r => {
-      if (r.status === "success") {
-        alert("Updated");
-        loadPendingMakeup();
-        loadDashboard();
-      } else {
-        alert("Update failed");
-      }
-    });
-}
-
-/* ================= DASHBOARD ================= */
-function loadDashboard() {
-  fetch(`${API_URL}?action=get_dashboard`)
-    .then(r => r.json())
-    .then(d => {
-      totalMissed.innerText = d.totalMissed || 0;
-      completed.innerText = d.completed || 0;
-      pending.innerText = d.pending || 0;
-    });
-}
-
-/* ================= SERVICE WORKER REGISTRATION ================= */
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("./service-worker.js")
-      .then(() => {
-        console.log("✅ Service Worker registered successfully");
-      })
-      .catch(err => {
-        console.error("❌ Service Worker registration failed:", err);
-      });
-  });
-}
+        tr.innerHTML =
