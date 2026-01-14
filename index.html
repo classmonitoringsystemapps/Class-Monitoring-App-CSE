@@ -8,6 +8,16 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#317EFB">
   <link rel="stylesheet" href="style.css">
+  <!-- ===== PWA SUPPORT (ADD BELOW) ===== -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0A7E4A">
+
+<!-- iOS support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="DIU Dropout">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<!-- ===== END PWA SUPPORT ===== -->
 </head>
 
 <body>
@@ -253,5 +263,12 @@
     loadPendingMakeup();
   };
 </script>
+<!-- ===== SERVICE WORKER REGISTER ===== -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+</script>
+<!-- ===== END ===== -->
 </body>
 </html>
