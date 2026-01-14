@@ -1,4 +1,3 @@
-
 // 🔍 Filter Pending Makeup by Teacher Initial
 document.addEventListener("input", function (e) {
   if (e.target.id !== "pendingTeacherSearch") return;
