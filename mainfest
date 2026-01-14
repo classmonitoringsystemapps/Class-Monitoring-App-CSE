@@ -1,18 +1,19 @@
 {
-  "name": "Class Monitoring App",
-  "short_name": "Class Monitor",
-  "start_url": ".",
+  "name": "DIU Dropout Follow-up System",
+  "short_name": "DIU Dropout",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#317EFB",
+  "background_color": "#f4f8f6",
+  "theme_color": "#0A7E4A",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
