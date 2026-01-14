@@ -1,3 +1,4 @@
+
 // 🔍 Filter Pending Makeup by Teacher Initial
 document.addEventListener("input", function (e) {
   if (e.target.id !== "pendingTeacherSearch") return;
@@ -18,7 +19,7 @@ document.addEventListener("input", function (e) {
 
 /* ========== UPDATE THIS to your Web App URL (exec) ========== */
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbygjo4Xo1gOVl5gFF_vgo908k0uCl9d-s1ZGwnKLgaX1w4ICuGdjgD2BhPUWBqmTz4Zug/exec";
+  "https://script.google.com/macros/s/AKfycbxTV_Z5NP6TseOx8iT3wS6wefpK7hNt-pv0np5grnbuTiLw6h66x6XVs-vnqztAXz_aSA/exec";
 function formatBDDateTimeFromInput(dateValue) {
   if (!dateValue) return "";
 
@@ -69,12 +70,13 @@ function loadDashboardAnimated(d) {
   const total = document.getElementById("totalMissed");
   const completed = document.getElementById("completed");
   const pending = document.getElementById("pending");
+  const extra = document.getElementById("extraCount"); // ✅ Extra class
 
   if (total) animateCount(total, d.totalMissed || 0);
   if (completed) animateCount(completed, d.completed || 0);
   if (pending) animateCount(pending, d.pending || 0);
+  if (extra) animateCount(extra, d.extra || 0); // ✅ Extra animated
 }
-
   // Selected date
   const selectedDate = new Date(dateValue);
 
@@ -289,6 +291,12 @@ function loadDashboard() {
       animateCount(
         document.getElementById("pending"),
         d.pending || 0
+      );
+
+      // ✅ EXTRA CLASS COUNT (FIXED)
+      animateCount(
+        document.getElementById("extraCount"),
+        d.extra || 0
       );
     })
     .catch(err => console.error("Dashboard error:", err));
