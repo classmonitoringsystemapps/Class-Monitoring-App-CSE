@@ -1,50 +1,54 @@
+/* ================= ROOT ================= */
 :root{
   --accent:#317efb;
   --bg:#f4f6f9;
   --card:#fff;
 }
 
+/* ================= GLOBAL ================= */
 *{
   box-sizing:border-box;
 }
 
-body{
+html, body{
   margin:0;
+  padding:0;
+  max-width:100%;
+  overflow-x:hidden;
   font-family:system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background:var(--bg);
 }
 
 /* ================= HEADER ================= */
 header{
+  position:sticky;
+  top:0;
+  z-index:1000;
   background:linear-gradient(90deg,var(--accent),#2a66d1);
   color:#fff;
   text-align:center;
-  padding:16px;
+  padding:10px 12px;
 }
 
-header h1 {
-  font-size: 20px;
-  margin: 0;
+/* Title */
+header h1{
+  margin:0;
+  font-size:22px;
+  font-weight:800;
+  background:linear-gradient(90deg,#ffeb3b,#ffffff,#00e5ff);
+  background-size:300% 300%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:titleGradient 5s ease infinite;
 }
 
-header .subtitle {
-  font-size: 13px;
-  opacity: 0.9;
-}
-
-/* Mobile optimization */
-@media (max-width: 600px) {
-  header {
-    padding: 10px;
-  }
-
-  header h1 {
-    font-size: 18px;
-  }
-
-  header .subtitle {
-    font-size: 12px;
-  }
+/* Subtitle */
+header .subtitle{
+  margin-top:4px;
+  font-size:13px;
+  font-weight:600;
+  color:#e0f7fa;
+  letter-spacing:0.4px;
 }
 
 /* ================= CONTAINER ================= */
@@ -57,17 +61,32 @@ header .subtitle {
 }
 
 /* ================= DASHBOARD ================= */
-.dashboard {
-  display: flex;
-  gap: 15px;
-  margin: 15px;
+.dashboard{
+  width:100%;
+  max-width:820px;
+  margin:12px auto;
+  display:flex;
+  gap:12px;
+  justify-content:space-between;
+  padding:0 10px;
 }
 
-.card {
-  background: #f2f4f8;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
+.dashboard .card{
+  flex:1;
+  min-width:100px;
+  background:#f2f4f8;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+  font-size:13px;
+  font-weight:600;
+}
+
+.dashboard span{
+  display:block;
+  font-size:18px;
+  margin-top:4px;
+  color:var(--accent);
 }
 
 /* ================= CONTROLS ================= */
@@ -80,12 +99,19 @@ header .subtitle {
 
 button{
   background:var(--accent);
-  color:white;
+  color:#fff;
   border:none;
   padding:10px 14px;
   border-radius:8px;
   cursor:pointer;
+  min-height:44px;
+  transition:all 0.2s ease;
 }
+
+button:active{
+  transform:scale(0.97);
+}
+
 /* ================= FORMS ================= */
 .form{
   margin-top:12px;
@@ -114,9 +140,10 @@ select{
   border-radius:8px;
   border:1px solid #ddd;
   font-size:14px;
+  transition:all 0.2s ease;
 }
 
-/* ================= FILTER INPUT ================= */
+/* ================= FILTER ================= */
 .filter{
   padding:8px;
   margin-top:6px;
@@ -134,24 +161,19 @@ select{
   margin-top:10px;
 }
 
-/* ================= WATERMARK ================= */
-.watermark{
-  font-size:13px;
-  color:#777;
-  margin-top:6px;
-}
 /* ================= TABLE ================= */
 .table-wrap{
   overflow-x:auto;
   margin-top:10px;
 }
+
 table{
   width:100%;
+  max-width:100%;
   border-collapse:collapse;
 }
 
-th,
-td{
+th, td{
   border:1px solid #ddd;
   padding:8px;
   font-size:13px;
@@ -162,7 +184,7 @@ th{
   font-weight:600;
 }
 
-/* ================= FOOTER (COLORFUL + ANIMATED) ================= */
+/* ================= FOOTER ================= */
 footer{
   margin-top:20px;
   text-align:center;
@@ -172,290 +194,107 @@ footer{
   background-size:300% 300%;
   animation:footerGradient 6s ease infinite;
 }
+
 footer small{
-  color:#ffffff;
+  color:#fff;
   font-size:13px;
   font-weight:600;
   letter-spacing:0.4px;
 }
 
-/* 🎓 DIU Icon + Text */
 footer small::before{
   content:"🎓 DIU • ";
   font-weight:700;
   color:#ffe082;
 }
 
-/* ================= MOBILE RESPONSIVE ================= */
+/* ================= LOGO ================= */
+.logo-wrap{
+  display:flex;
+  justify-content:center;
+  margin-bottom:10px;
+}
+
+.app-logo{
+  width:72px;
+  height:72px;
+  animation:logoEnter 0.8s ease-out, logoPulse 3s ease-in-out infinite;
+}
+
+/* ================= SPLASH ================= */
+#app-splash{
+  position:fixed;
+  inset:0;
+  background:#0f172a;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  animation:splashFadeOut 0.6s ease forwards;
+  animation-delay:1.2s;
+}
+
+#app-splash img{
+  width:120px;
+  height:120px;
+  animation:logoPulse 1.2s ease-in-out infinite;
+}
+
+#app-splash p{
+  margin-top:14px;
+  font-weight:600;
+  letter-spacing:0.6px;
+  color:#e5e7eb;
+}
+
+/* ================= MOBILE ================= */
 @media (max-width:600px){
+  header h1{ font-size:20px; }
+  header .subtitle{ font-size:12px; }
 
-  .grid{
-    flex-direction:column;
-  }
+  .grid{ flex-direction:column; }
+  label{ flex:1 1 100%; }
 
-  label{
-    flex:1 1 100%;
-  }
+  button{ width:100%; font-size:16px; }
+  input, select{ font-size:16px; }
 
-  button{
-    width:100%;
-    font-size:16px;
-  }
-
-  input,
-  select{
-    font-size:16px;
-  }
-
-  table{
-    font-size:12px;
-  }
-
-  th,
-  td{
-    padding:6px;
-  }
+  .dashboard{ gap:8px; }
+  .dashboard .card{ font-size:12px; padding:10px; }
+  .dashboard span{ font-size:16px; }
 }
 
-/* ================= FOOTER ANIMATION ================= */
-@keyframes footerGradient{
-  0%   { background-position:0% 50%; }
-  50%  { background-position:100% 50%; }
-  100% { background-position:0% 50%; }
-}
-/* ================= ANIMATED HEADER TITLE ================= */
-/* Reduce header height */
-header{
-  padding: 10px 12px;
-}
-
-/* Main App Title */
-header h1{
-  margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  background: linear-gradient(90deg, #ffeb3b, #ffffff, #00e5ff);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: titleGradient 5s ease infinite;
-}
-
-/* Subtitle */
-header .subtitle{
-  margin-top: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #e0f7fa;
-  letter-spacing: 0.4px;
-}
-/* Mobile optimization */
-@media (max-width:600px){
-  header h1{
-    font-size: 20px;
-  }
-
-  header .subtitle{
-    font-size: 12px;
-  }
-}
-
-/* Gradient animation for title */
-@keyframes titleGradient{
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* ===== Mobile Touch Improvements ===== */
-
-/* Bigger tap area for buttons */
-button {
-  min-height: 44px; /* mobile tap standard */
-}
-/* Smooth app-like transitions */
-button,
-input,
-select {
-  transition: all 0.2s ease;
-}
-
-/* Press animation */
-button:active {
-  transform: scale(0.97);
-}
-/* ================= FIXED HEADER ================= */
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-/* Prevent content hiding under sticky header */
-main.container {
-  margin-top: 10px;
-}
-/* ================= DASHBOARD (CLEAN) ================= */
-.dashboard {
-  max-width: 820px;
-  margin: 12px auto;
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-  padding: 0 10px;
-}
-
-.dashboard .card {
-  flex: 1;
-  min-width: 100px;
-  background: #f2f4f8;
-  padding: 12px;
-  border-radius: 10px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-}
-.dashboard span {
-  display: block;
-  font-size: 18px;
-  margin-top: 4px;
-  color: var(--accent);
-}
-/* Mobile */
-@media (max-width: 600px) {
-  .dashboard {
-    gap: 8px;
-  }
-  .dashboard .card {
-    font-size: 12px;
-    padding: 10px;
-  }
-
-  .dashboard span {
-    font-size: 16px;
-  }
-}
-/* TEMPORARY: Hide Total Missed card */
-/*
-.dashboard .total-missed {
-  display: none !important;
-}
-*/
 /* ================= DARK MODE ================= */
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #0f172a;
-    color: #e5e7eb;
-  }
-
-  header {
-    background: #020617;
-    color: #f8fafc;
-  }
-
-  .form,
-  .card,
-  table {
-    background: #020617;
-    color: #e5e7eb;
-  }
-
-  input,
-  select,
-  button {
-    background: #020617;
-    color: #e5e7eb;
-    border: 1px solid #334155;
-  }
-
-  .dashboard .card {
-    background: #020617;
-    box-shadow: none;
-  }
-
-  table th {
-    background: #020617;
-  }
+@media (prefers-color-scheme: dark){
+  body{ background:#0f172a; color:#e5e7eb; }
+  header{ background:#020617; }
+  .form, .card, table{ background:#020617; color:#e5e7eb; }
+  input, select, button{ background:#020617; border:1px solid #334155; }
 }
 
-/* ================= LOGO ANIMATION ================= */
-.logo-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
+/* ================= ANIMATIONS ================= */
+@keyframes footerGradient{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
-.app-logo {
-  width: 72px;
-  height: 72px;
-  animation: logoEnter 0.8s ease-out,
-             logoPulse 3s ease-in-out infinite;
+@keyframes titleGradient{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
-/* Entry animation */
-@keyframes logoEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+@keyframes logoEnter{
+  from{opacity:0; transform:scale(0.8)}
+  to{opacity:1; transform:scale(1)}
 }
 
-/* Soft breathing animation */
-@keyframes logoPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
+@keyframes logoPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.05)}
 }
 
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .app-logo {
-    animation: none;
-  }
-}
-/* ================= PWA SPLASH SCREEN ================= */
-
-#app-splash {
-  position: fixed;
-  inset: 0;
-  background: #0f172a;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  animation: splashFadeOut 0.6s ease forwards;
-  animation-delay: 1.2s;
-}
-#app-splash img {
-  width: 120px;
-  height: 120px;
-  animation: logoPulse 1.2s ease-in-out infinite;
-}
-#app-splash p {
-  margin-top: 14px;
-  font-weight: 600;
-  letter-spacing: 0.6px;
-  color: #e5e7eb;
-}
-
-/* Logo animation */
-@keyframes logoPulse {
-  0% { transform: scale(0.95); opacity: 0.7; }
-  50% { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(0.95); opacity: 0.7; }
-}
-/* Fade out splash */
-@keyframes splashFadeOut {
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
+@keyframes splashFadeOut{
+  to{opacity:0; visibility:hidden}
 }
