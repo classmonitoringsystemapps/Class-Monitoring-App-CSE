@@ -351,9 +351,11 @@ main.container {
   }
 }
 /* TEMPORARY: Hide Total Missed card */
+/*
 .dashboard .total-missed {
   display: none !important;
 }
+*/
 /* ================= DARK MODE ================= */
 @media (prefers-color-scheme: dark) {
   body {
