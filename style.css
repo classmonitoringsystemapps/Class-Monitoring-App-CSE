@@ -247,23 +247,57 @@ footer small::before{
   letter-spacing:0.6px;
   color:#e5e7eb;
 }
-
 /* ================= MOBILE ================= */
 @media (max-width:600px){
-  header h1{ font-size:20px; }
-  header .subtitle{ font-size:12px; }
 
-  .grid{ flex-direction:column; }
-  label{ flex:1 1 100%; }
+  /* Header */
+  header h1{
+    font-size:20px;
+  }
 
-  button{ width:100%; font-size:16px; }
-  input, select{ font-size:16px; }
+  header .subtitle{
+    font-size:12px;
+  }
 
-  .dashboard{ gap:8px; }
-  .dashboard .card{ font-size:12px; padding:10px; }
-  .dashboard span{ font-size:16px; }
+  /* Forms */
+  .grid{
+    flex-direction:column;
+  }
+
+  label{
+    flex:1 1 100%;
+  }
+
+  /* Inputs & Buttons */
+  button{
+    width:100%;
+    font-size:16px;
+    min-height:44px;
+  }
+
+  input,
+  select{
+    font-size:16px;
+  }
+
+  /* ===== DASHBOARD FIX (IMPORTANT) ===== */
+  .dashboard{
+    gap:8px;
+    flex-wrap:wrap;           /* 🔑 allow wrapping */
+    justify-content:center;   /* center cards */
+  }
+
+  .dashboard .card{
+    flex:0 0 calc(50% - 8px); /* 2 cards per row */
+    min-width:unset;          /* remove fixed width */
+    font-size:12px;
+    padding:10px;
+  }
+
+  .dashboard span{
+    font-size:16px;
+  }
 }
-
 /* ================= DARK MODE ================= */
 @media (prefers-color-scheme: dark){
   body{ background:#0f172a; color:#e5e7eb; }
@@ -298,3 +332,4 @@ footer small::before{
 @keyframes splashFadeOut{
   to{opacity:0; visibility:hidden}
 }
+
