@@ -18,7 +18,10 @@ html, body{
   font-family:system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background:var(--bg);
 }
-
+html, body {
+  width: 100%;
+  overflow-x: hidden; /* 🔒 HARD LOCK */
+}
 /* ================= HEADER ================= */
 header{
   position:sticky;
@@ -250,16 +253,9 @@ footer small::before{
 /* ================= MOBILE ================= */
 @media (max-width:600px){
 
-  /* Header */
-  header h1{
-    font-size:20px;
-  }
+  header h1{ font-size:20px; }
+  header .subtitle{ font-size:12px; }
 
-  header .subtitle{
-    font-size:12px;
-  }
-
-  /* Forms */
   .grid{
     flex-direction:column;
   }
@@ -268,34 +264,40 @@ footer small::before{
     flex:1 1 100%;
   }
 
-  /* Inputs & Buttons */
   button{
     width:100%;
     font-size:16px;
     min-height:44px;
   }
 
-  input,
-  select{
+  input, select{
     font-size:16px;
   }
 
-  /* ===== DASHBOARD FIX (IMPORTANT) ===== */
+  /* ===== DASHBOARD FINAL FIX ===== */
   .dashboard{
+    width:100%;
+    margin:12px 0;          /* ❌ auto বাদ */
+    padding:0 8px;
+    display:flex;
+    flex-wrap:wrap;
     gap:8px;
-    flex-wrap:wrap;           /* 🔑 allow wrapping */
-    justify-content:center;   /* center cards */
+    justify-content:space-between;
   }
 
   .dashboard .card{
-    flex:0 0 calc(50% - 8px); /* 2 cards per row */
-    min-width:unset;          /* remove fixed width */
+    width:calc(50% - 4px);  /* 🔑 EXACT FIT */
+    flex:none;              /* ❌ flex-grow remove */
+    min-width:0;            /* 🔑 prevent overflow */
+    box-sizing:border-box;
+    text-align:center;
     font-size:12px;
     padding:10px;
   }
 
   .dashboard span{
     font-size:16px;
+    display:block;
   }
 }
 /* ================= DARK MODE ================= */
@@ -332,4 +334,3 @@ footer small::before{
 @keyframes splashFadeOut{
   to{opacity:0; visibility:hidden}
 }
-
