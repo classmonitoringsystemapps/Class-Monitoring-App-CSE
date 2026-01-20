@@ -1,104 +1,8 @@
-// 🔍 Filter Pending Makeup by Teacher Initial
-document.addEventListener("input", function (e) {
-  if (e.target.id !== "pendingTeacherSearch") return;
-
-  const query = e.target.value.toLowerCase();
-  const rows = document.querySelectorAll("#pendingTable tbody tr");
-
-  rows.forEach(row => {
-    const teacherCell = row.cells[3]; // Teacher column index
-    if (!teacherCell) return;
-
-    const teacherText = teacherCell.textContent.toLowerCase();
-    row.style.display = teacherText.includes(query) ? "" : "none";
-  });
-});
-
-/* script.js - frontend logic (FINAL FIXED VERSION) */
-
-/* ========== UPDATE THIS to your Web App URL (exec) ========== */
+/* =========================================================
+   CONFIG
+========================================================= */
 const API_URL =
   "https://script.google.com/macros/s/AKfycbxTV_Z5NP6TseOx8iT3wS6wefpK7hNt-pv0np5grnbuTiLw6h66x6XVs-vnqztAXz_aSA/exec";
-function formatBDDateTimeFromInput(dateValue) {
-  if (!dateValue) return "";
-
-/* ========= DASHBOARD COUNTER ANIMATION (SAFE) ========= */
-function animateCount(el, to) {
-  if (!el) return;
-  let start = 0;
-  const duration = 400; // ms
-  const stepTime = 20;
-  const steps = Math.ceil(duration / stepTime);
-  const increment = Math.max(1, Math.floor(to / steps));
-
-  const timer = setInterval(() => {
-    start += increment;
-    if (start >= to) {
-      el.innerText = to;
-      clearInterval(timer);
-    } else {
-      el.innerText = start;
-    }
-  }, stepTime);
-}
-
-  // Get current Bangladesh time
-  const nowBD = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
-  );
-/* ================= DASHBOARD ANIMATION ================= */
-function animateCount(el, to) {
-  if (!el) return;
-  let start = 0;
-  const duration = 400;
-  const stepTime = 20;
-  const steps = Math.ceil(duration / stepTime);
-  const increment = Math.max(1, Math.floor(to / steps));
-
-  const timer = setInterval(() => {
-    start += increment;
-    if (start >= to) {
-      el.innerText = to;
-      clearInterval(timer);
-    } else {
-      el.innerText = start;
-    }
-  }, stepTime);
-}
-function loadDashboardAnimated(d) {
-  const total = document.getElementById("totalMissed");
-  const completed = document.getElementById("completed");
-  const pending = document.getElementById("pending");
-  const extra = document.getElementById("extraCount"); // ✅ Extra class
-
-  if (total) animateCount(total, d.totalMissed || 0);
-  if (completed) animateCount(completed, d.completed || 0);
-  if (pending) animateCount(pending, d.pending || 0);
-  if (extra) animateCount(extra, d.extra || 0); // ✅ Extra animated
-}
-  // Selected date
-  const selectedDate = new Date(dateValue);
-
-  // Combine selected DATE + current BD TIME
-  const finalDate = new Date(
-    selectedDate.getFullYear(),
-    selectedDate.getMonth(),
-    selectedDate.getDate(),
-    nowBD.getHours(),
-    nowBD.getMinutes(),
-    0
-  );
-
-  return finalDate.toLocaleString("en-GB", {
-    timeZone: "Asia/Dhaka",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true
-  }).replace(/(\d{4})/, "$1,");
-}
 /* ---------- MASTER LISTS ---------- */
 const TEACHERS = [
 "Dr. Sheak Rashed Haider Noori (SRH)","Dr. S.M Aminul Haque (SMAH)","Dr. Arif Mahmud (AM)",
@@ -156,7 +60,7 @@ const DEPARTMENTS = ["CSE", "Others"];
 
 /* ================= COURSE LIST ================= */
 const COURSES = [
-  "ACT211","ACT301","ACT322","ACT327","AOL101","BNS101","CSE112","CSE113","CSE114","CSE115","CSE121","CSE122","CSE123","CSE124","CSE131","CSE132","CSE133","CSE134","CSE135","CSE136","CSE212","CSE213","CSE214","CSE215","CSE216","CSE221","CSE222","CSE223","CSE224","CSE225","CSE226","CSE227","CSE228","CSE231","CSE232","CSE233","CSE234","CSE235","CSE236","CSE237","CSE311","CSE312","CSE313","CSE314","CSE315","CSE316","CSE317","CSE321","CSE322","CSE323","CSE324","CSE325","CSE326","CSE328","CSE331","CSE332","CSE333","CSE334","CSE335","CSE336","CSE411","CSE412","CSE413","CSE414","CSE415","CSE416","CSE417","CSE418","CSE421","CSE422","CSE423","CSE426","CSE427","CSE431","CSE444","CSE445","CSE446","CSE450","CSE498","CSE499","ECO237","ECO314","ECO321","ENG101","ENG102","ENG113","ENG123","GED121","GED131","GED201","GED216","GED321","MAT101","MAT102","MAT111","MAT121","MAT211","MAT223","PHY101","PHY102","PHY103","PHY113","PHY114","STA101","STA133","STA221","STA227"
+"ACT211","ACT301","ACT322","ACT327","AOL101","BNS101","CSE112","CSE113","CSE114","CSE115","CSE121","CSE122","CSE123","CSE124","CSE131","CSE132","CSE133","CSE134","CSE135","CSE136","CSE212","CSE213","CSE214","CSE215","CSE216","CSE221","CSE222","CSE223","CSE224","CSE225","CSE226","CSE227","CSE228","CSE231","CSE232","CSE233","CSE234","CSE235","CSE236","CSE237","CSE311","CSE312","CSE313","CSE314","CSE315","CSE316","CSE317","CSE321","CSE322","CSE323","CSE324","CSE325","CSE326","CSE328","CSE331","CSE332","CSE333","CSE334","CSE335","CSE336","CSE411","CSE412","CSE413","CSE414","CSE415","CSE416","CSE417","CSE418","CSE421","CSE422","CSE423","CSE426","CSE427","CSE431","CSE444","CSE445","CSE446","CSE450","CSE498","CSE499","ECO237","ECO314","ECO321","ENG101","ENG102","ENG113","ENG123","GED121","GED131","GED201","GED216","GED321","MAT101","MAT102","MAT111","MAT121","MAT211","MAT223","PHY101","PHY102","PHY103","PHY113","PHY114","STA101","STA133","STA221","STA227"
 ];
 
 const ROOMS = [
@@ -183,7 +87,6 @@ const TIMES = [
 /* =========================================================
    DATE FORMATTER (BD TIME)
 ========================================================= */
-
 function formatBDDateTimeFromInput(dateValue) {
   if (!dateValue) return "";
 
@@ -192,6 +95,7 @@ function formatBDDateTimeFromInput(dateValue) {
   );
 
   const d = new Date(dateValue);
+  if (isNaN(d)) return "";
 
   const finalDate = new Date(
     d.getFullYear(),
@@ -202,23 +106,53 @@ function formatBDDateTimeFromInput(dateValue) {
     0
   );
 
-  return finalDate
-    .toLocaleString("en-GB", {
-      timeZone: "Asia/Dhaka",
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true
+  return finalDate.toLocaleString("en-GB", {
+    timeZone: "Asia/Dhaka",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+function animateCount(el, to) {
+  if (!el) return;
+  let val = 0;
+  const step = Math.max(Math.ceil(to / 30), 1);
+
+  const timer = setInterval(() => {
+    val += step;
+    if (val >= to) {
+      el.textContent = to;
+      clearInterval(timer);
+    } else {
+      el.textContent = val;
+    }
+  }, 20);
+}
+
+function loadDashboard() {
+  fetch(`${API_URL}?action=get_dashboard`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.status !== "success") return;
+
+      animateCount(document.getElementById("totalMissed"), d.totalMissed || 0);
+      animateCount(document.getElementById("completed"), d.completed || 0);
+      animateCount(document.getElementById("pending"), d.pending || 0);
+      animateCount(document.getElementById("extraCount"), d.extra || 0);
     })
-    .replace(/(\d{4})/, "$1,");
+    .catch(console.error);
 }
 
 /* =========================================================
    HELPERS
 ========================================================= */
-
 function populateSelect(id, list) {
   const sel = document.getElementById(id);
   if (!sel) return;
@@ -232,170 +166,122 @@ function populateSelect(id, list) {
   });
 }
 
-function addFilter(filterId, selectId) {
-  const f = document.getElementById(filterId);
-  const s = document.getElementById(selectId);
-  if (!f || !s) return;
+function addFilter(inputId, selectId) {
+  const input = document.getElementById(inputId);
+  const select = document.getElementById(selectId);
+  if (!input || !select) return;
 
-  f.addEventListener("input", () => {
-    const q = f.value.toLowerCase();
-    [...s.options].forEach(o => {
-      o.style.display = o.text.toLowerCase().includes(q) ? "" : "none";
+  input.addEventListener("input", () => {
+    const q = input.value.toLowerCase();
+    [...select.options].forEach(o => {
+      o.hidden = !o.textContent.toLowerCase().includes(q);
     });
   });
 }
 
 async function postForm(payload) {
-  const params = new URLSearchParams(payload);
-  const res = await fetch(API_URL, { method: "POST", body: params });
-  return await res.json();
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: new URLSearchParams(payload)
+  });
+  return res.json();
 }
 
 /* =========================================================
-   DASHBOARD (ANIMATED)
+   MISSED CLASS (WITH WATERMARK)
 ========================================================= */
-
-function animateCount(el, to) {
-  if (!el) return;
-
-  let start = 0;
-  const step = Math.max(Math.ceil(to / 30), 1);
-
-  const timer = setInterval(() => {
-    start += step;
-    if (start >= to) {
-      start = to;
-      clearInterval(timer);
-    }
-    el.innerText = start;
-  }, 20);
-}
-
-function loadDashboard() {
-  fetch(`${API_URL}?action=get_dashboard`)
-    .then(r => r.json())
-    .then(d => {
-      if (d.status !== "success") return;
-
-      animateCount(
-        document.getElementById("totalMissed"),
-        d.totalMissed || 0
-      );
-
-      animateCount(
-        document.getElementById("completed"),
-        d.completed || 0
-      );
-
-      animateCount(
-        document.getElementById("pending"),
-        d.pending || 0
-      );
-
-      // ✅ EXTRA CLASS COUNT (FIXED)
-      animateCount(
-        document.getElementById("extraCount"),
-        d.extra || 0
-      );
-    })
-    .catch(err => console.error("Dashboard error:", err));
-}
-
-/* =========================================================
-   MISSED CLASS
-========================================================= */
-
-document.getElementById("missedForm").addEventListener("submit", async e => {
+missedForm.addEventListener("submit", async e => {
   e.preventDefault();
+
+  const watermark = `CMS | Missed | ${new Date().toLocaleString("en-GB", {
+    timeZone: "Asia/Dhaka"
+  })}`;
 
   const payload = {
     action: "save_missed",
     date: formatBDDateTimeFromInput(m_date.value),
-    department: m_dept.value.trim(),
-    course: m_course.value.trim(),
+    department: m_dept.value,
+    course: m_course.value,
     room: m_room.value,
     timeSlot: m_time.value,
     teacherInitial: m_teacher.value,
-    reason: m_reason.value.trim()
+    reason: m_reason.value,
+    watermark // ✅ system watermark
   };
 
   const res = await postForm(payload);
 
   if (res.status === "success") {
-    alert("Missed Class Saved!");
+    alert("✅ Missed class saved");
     e.target.reset();
     loadDashboard();
   } else {
-    alert(res.message || "Error saving missed class");
+    alert(res.message || "❌ Failed to save missed class");
   }
 });
 
-/* =========================================================
-   MAKEUP CLASS
-========================================================= */
 
-document.getElementById("makeupForm").addEventListener("submit", async e => {
+/* =========================================================
+   MAKEUP CLASS (WITH WATERMARK)
+========================================================= */
+makeupForm.addEventListener("submit", async e => {
   e.preventDefault();
+
+  const watermark = `CMS | Makeup | ${new Date().toLocaleString("en-GB", {
+    timeZone: "Asia/Dhaka"
+  })}`;
 
   const payload = {
     action: "save_makeup",
     scheduleDate: formatBDDateTimeFromInput(k_schedule.value),
-    department: k_dept.value.trim(),
-    course: k_course.value.trim(),
+    department: k_dept.value,
+    course: k_course.value,
     teacherInitial: k_teacher.value,
     makeupDate: formatBDDateTimeFromInput(k_date.value),
     makeupTime: k_time.value,
     makeupRoom: k_room.value,
     status: k_status.value,
-    remarks: k_remarks.value.trim()
+    remarks: k_remarks.value.trim(),
+    watermark // ✅ system watermark
   };
 
-  if (
-    !payload.scheduleDate ||
-    !payload.department ||
-    !payload.course ||
-    !payload.teacherInitial ||
-    !payload.makeupDate ||
-    !payload.makeupTime ||
-    !payload.makeupRoom
-  ) {
-    alert("Please fill all required fields");
-    return;
+  for (const k in payload) {
+    if (!payload[k] && k !== "remarks") {
+      alert("⚠️ Please fill all required fields");
+      return;
+    }
   }
 
   const res = await postForm(payload);
 
   if (res.status === "success") {
-    alert("Makeup Class Saved!");
+    alert("✅ Makeup class saved");
     e.target.reset();
     loadPendingMakeup();
     loadDashboard();
   } else {
-    alert("Makeup save failed");
+    alert(res.message || "❌ Room already booked for this slot");
   }
 });
 
 /* =========================================================
-   PENDING MAKEUP LIST
+   PENDING MAKEUP
 ========================================================= */
-
 function updateMakeup(row) {
   const status = document.getElementById(`status_${row}`).value;
-  const remarks = document.getElementById(`remarks_${row}`).value;
+  const remarks = document.getElementById(`remarks_${row}`).value || "";
 
   fetch(
-    `${API_URL}?action=update_makeup&row=${row}&status=${encodeURIComponent(
-      status
-    )}&remarks=${encodeURIComponent(remarks)}`
+    `${API_URL}?action=update_makeup&row=${row}&status=${status}&remarks=${encodeURIComponent(remarks)}`
   )
     .then(r => r.json())
     .then(res => {
       if (res.status === "success") {
-        alert("Updated successfully");
+        alert("✅ Updated");
         loadPendingMakeup();
         loadDashboard();
       } else {
-        alert(res.message || "Update failed");
+        alert(res.message || "❌ Update failed");
       }
     });
 }
@@ -409,42 +295,42 @@ function loadPendingMakeup() {
 
       tbody.innerHTML = "";
 
-      if (!res.data || res.data.length === 0) {
+      if (!res.data || !res.data.length) {
         tbody.innerHTML =
           `<tr><td colspan="9">No pending makeup classes</td></tr>`;
         return;
       }
 
-      res.data.forEach(row => {
-        const tr = document.createElement("tr");
+      res.data.forEach(r => {
+        tbody.insertAdjacentHTML("beforeend", `
+          <tr>
+            <td>${r.scheduleDate}</td>
+            <td>${r.department}</td>
+            <td>${r.course}</td>
+            <td>${r.teacher}</td>
+            <td>${r.makeupDate}</td>
+            <td>${r.makeupTime}</td>
+            <td>${r.makeupRoom}</td>
+            <td>
+  <select id="status_${r.row}">
+    <!-- Watermark showing current status -->
+    <option value="" disabled selected hidden>${r.status}</option>
+    <option value="Pending">Pending</option>
+    <option value="Completed">Completed</option>
+  </select>
+</td>
 
-        tr.innerHTML = `
-          <td>${row.scheduleDate}</td>
-          <td>${row.department}</td>
-          <td>${row.course}</td>
-          <td>${row.teacher}</td>
-          <td>${row.makeupDate}</td>
-          <td>${row.makeupTime}</td>
-          <td>${row.makeupRoom}</td>
-          <td>
-            <select id="status_${row.row}">
-              <option value="Pending" ${row.status === "Pending" ? "selected" : ""}>Pending</option>
-              <option value="Completed" ${row.status === "Completed" ? "selected" : ""}>Completed</option>
-            </select>
-          </td>
-          <td>
-            <input
-              type="text"
-              id="remarks_${row.row}"
-              value="${row.remarks || ""}"
-              placeholder="Provide class attendance link"
-            >
-            <br>
-            <button onclick="updateMakeup(${row.row})">Update</button>
-          </td>
-        `;
+<td>
+  <input
+    id="remarks_${r.row}"
+    placeholder="Attendance link provide"
+    value="${r.remarks || ""}"
+  >
+  <button onclick="updateMakeup(${r.row})">Update</button>
+</td>
 
-        tbody.appendChild(tr);
+  </tr>
+       `);
       });
     });
 }
@@ -452,23 +338,17 @@ function loadPendingMakeup() {
 /* =========================================================
    FILTER PENDING BY TEACHER
 ========================================================= */
-
-document.addEventListener("input", e => {
-  if (e.target.id !== "pendingTeacherSearch") return;
-
+pendingTeacherSearch.addEventListener("input", e => {
   const q = e.target.value.toLowerCase();
   document.querySelectorAll("#pendingTable tbody tr").forEach(tr => {
-    const cell = tr.cells[3];
-    tr.style.display = cell && cell.textContent.toLowerCase().includes(q)
-      ? ""
-      : "none";
+    tr.style.display =
+      tr.cells[3].textContent.toLowerCase().includes(q) ? "" : "none";
   });
 });
 
 /* =========================================================
    INITIAL LOAD
 ========================================================= */
-
 window.addEventListener("DOMContentLoaded", () => {
   populateSelect("m_teacher", TEACHERS);
   populateSelect("k_teacher", TEACHERS);
@@ -483,14 +363,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   addFilter("m_teacher_filter", "m_teacher");
   addFilter("k_teacher_filter", "k_teacher");
-  addFilter("m_dept_filter", "m_dept");
-  addFilter("k_dept_filter", "k_dept");
-  addFilter("m_course_filter", "m_course");
-  addFilter("k_course_filter", "k_course");
-  addFilter("m_room_filter", "m_room");
-  addFilter("k_room_filter", "k_room");
-  addFilter("m_time_filter", "m_time");
-  addFilter("k_time_filter", "k_time");
 
   loadDashboard();
   loadPendingMakeup();
@@ -499,18 +371,6 @@ window.addEventListener("DOMContentLoaded", () => {
 /* =========================================================
    SERVICE WORKER
 ========================================================= */
-
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("./service-worker.js")
-      .then(() => console.log("✅ Service Worker registered"))
-      .catch(err => console.error("❌ SW error:", err));
-  });
+  navigator.serviceWorker.register("./service-worker.js");
 }
-window.addEventListener("load", () => {
-  const splash = document.getElementById("app-splash");
-  if (splash) {
-    setTimeout(() => splash.remove(), 2000);
-  }
-});
