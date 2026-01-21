@@ -3,7 +3,10 @@
 ========================================================= */
 const API_URL =
   "https://script.google.com/macros/s/AKfycbxTV_Z5NP6TseOx8iT3wS6wefpK7hNt-pv0np5grnbuTiLw6h66x6XVs-vnqztAXz_aSA/exec";
-/* ---------- MASTER LISTS ---------- */
+
+/* =========================================================
+   MASTER LISTS
+========================================================= */
 const TEACHERS = [
 "Dr. Sheak Rashed Haider Noori (SRH)","Dr. S.M Aminul Haque (SMAH)","Dr. Arif Mahmud (AM)",
 "Dr. Md. Fokhray Hossain (MFH)","Professor Dr. Md. Adnan Kiber (MAK)","Professor Dr. Fernaz Narin Nur (FNN)",
@@ -85,18 +88,21 @@ const TIMES = [
 ];
 
 /* =========================================================
-   DATE FORMATTER (BD TIME)
+   DATE FORMATTER (BD TIME → 20 Jan 2026, 04:02 pm)
 ========================================================= */
-function formatBDDateTimeFromInput(dateValue) {
-  if (!dateValue) return "";
+function formatBDDateTimeFromInput(value) {
+  if (!value) return "";
 
+  // Current time in Bangladesh
   const nowBD = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
   );
 
-  const d = new Date(dateValue);
+  // Date from input (YYYY-MM-DD)
+  const d = new Date(value);
   if (isNaN(d)) return "";
 
+  // Merge selected date + current BD time
   const finalDate = new Date(
     d.getFullYear(),
     d.getMonth(),
@@ -106,15 +112,20 @@ function formatBDDateTimeFromInput(dateValue) {
     0
   );
 
-  return finalDate.toLocaleString("en-GB", {
-    timeZone: "Asia/Dhaka",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true
-  });
+  // Format output
+  return finalDate
+    .toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "Asia/Dhaka"
+    })
+    .replace(",", "")              // remove extra comma
+    .replace(" am", " am")
+    .replace(" pm", " pm");
 }
 
 /* =========================================================
@@ -142,10 +153,10 @@ function loadDashboard() {
     .then(d => {
       if (d.status !== "success") return;
 
-      animateCount(document.getElementById("totalMissed"), d.totalMissed || 0);
-      animateCount(document.getElementById("completed"), d.completed || 0);
-      animateCount(document.getElementById("pending"), d.pending || 0);
-      animateCount(document.getElementById("extraCount"), d.extra || 0);
+      animateCount(totalMissed, d.totalMissed || 0);
+      animateCount(completed, d.completed || 0);
+      animateCount(pending, d.pending || 0);
+      animateCount(extraCount, d.extra || 0);
     })
     .catch(console.error);
 }
@@ -177,20 +188,17 @@ async function postForm(payload) {
 function enableSearchableSelect(filterId, selectId) {
   const filter = document.getElementById(filterId);
   const select = document.getElementById(selectId);
-
   if (!filter || !select) return;
 
-  // Cache original options
-  const originalOptions = Array.from(select.options).map(o => ({
+  const original = Array.from(select.options).map(o => ({
     value: o.value,
     text: o.textContent
   }));
 
   filter.addEventListener("input", () => {
     const q = filter.value.toLowerCase().trim();
-
     select.innerHTML = "";
-    originalOptions.forEach(o => {
+    original.forEach(o => {
       if (!q || o.text.toLowerCase().includes(q)) {
         const opt = document.createElement("option");
         opt.value = o.value;
@@ -200,7 +208,6 @@ function enableSearchableSelect(filterId, selectId) {
     });
   });
 
-  // Sync input when user selects
   select.addEventListener("change", () => {
     filter.value = select.value;
   });
@@ -225,7 +232,7 @@ missedForm.addEventListener("submit", async e => {
     timeSlot: m_time.value,
     teacherInitial: m_teacher.value,
     reason: m_reason.value,
-    watermark // ✅ system watermark
+    watermark
   };
 
   const res = await postForm(payload);
@@ -238,7 +245,6 @@ missedForm.addEventListener("submit", async e => {
     alert(res.message || "❌ Failed to save missed class");
   }
 });
-
 
 /* =========================================================
    MAKEUP CLASS (WITH WATERMARK)
@@ -261,7 +267,7 @@ makeupForm.addEventListener("submit", async e => {
     makeupRoom: k_room.value,
     status: k_status.value,
     remarks: k_remarks.value.trim(),
-    watermark // ✅ system watermark
+    watermark
   };
 
   for (const k in payload) {
@@ -287,8 +293,13 @@ makeupForm.addEventListener("submit", async e => {
    PENDING MAKEUP
 ========================================================= */
 function updateMakeup(row) {
-  const status = document.getElementById(`status_${row}`).value;
-  const remarks = document.getElementById(`remarks_${row}`).value || "";
+  const statusEl = document.getElementById(`status_${row}`);
+  const remarksEl = document.getElementById(`remarks_${row}`);
+
+  if (!statusEl) return;
+
+  const status = statusEl.value;
+  const remarks = remarksEl ? remarksEl.value.trim() : "";
 
   fetch(
     `${API_URL}?action=update_makeup&row=${row}&status=${status}&remarks=${encodeURIComponent(remarks)}`
@@ -302,7 +313,8 @@ function updateMakeup(row) {
       } else {
         alert(res.message || "❌ Update failed");
       }
-    });
+    })
+    .catch(console.error);
 }
 
 function loadPendingMakeup() {
@@ -321,49 +333,39 @@ function loadPendingMakeup() {
       }
 
       res.data.forEach(r => {
-        tbody.insertAdjacentHTML("beforeend", `
-          <tr>
-            <td>${r.scheduleDate}</td>
-            <td>${r.department}</td>
-            <td>${r.course}</td>
-            <td>${r.teacher}</td>
-            <td>${r.makeupDate}</td>
-            <td>${r.makeupTime}</td>
-            <td>${r.makeupRoom}</td>
-            <td>
-  <select id="status_${r.row}">
-    <!-- Watermark showing current status -->
-    <option value="" disabled selected hidden>${r.status}</option>
-    <option value="Pending">Pending</option>
-    <option value="Completed">Completed</option>
-  </select>
-</td>
-
-<td>
-  <input
-    id="remarks_${r.row}"
-    placeholder="Attendance link provide"
-    value="${r.remarks || ""}"
-  >
-  <button onclick="updateMakeup(${r.row})">Update</button>
-</td>
-
-  </tr>
-       `);
+        tbody.insertAdjacentHTML(
+          "beforeend",
+          `
+<tr>
+  <td>${r.scheduleDate}</td>
+  <td>${r.department}</td>
+  <td>${r.course}</td>
+  <td>${r.teacher}</td>
+  <td>${r.makeupDate}</td>
+  <td>${r.makeupTime}</td>
+  <td>${r.makeupRoom}</td>
+  <td>
+    <select id="status_${r.row}">
+      <option value="" disabled selected hidden>${r.status}</option>
+      <option value="Pending">Pending</option>
+      <option value="Completed">Completed</option>
+    </select>
+  </td>
+  <td>
+    <input
+      id="remarks_${r.row}"
+      value="${r.remarks || ""}"
+      placeholder="Attendance link provide"
+    >
+    <button onclick="updateMakeup(${r.row})">Update</button>
+  </td>
+</tr>
+          `
+        );
       });
-    });
+    })
+    .catch(console.error);
 }
-
-/* =========================================================
-   FILTER PENDING BY TEACHER
-========================================================= */
-pendingTeacherSearch.addEventListener("input", e => {
-  const q = e.target.value.toLowerCase();
-  document.querySelectorAll("#pendingTable tbody tr").forEach(tr => {
-    tr.style.display =
-      tr.cells[3].textContent.toLowerCase().includes(q) ? "" : "none";
-  });
-});
 
 /* =========================================================
    INITIAL LOAD
@@ -380,20 +382,16 @@ window.addEventListener("DOMContentLoaded", () => {
   populateSelect("m_time", TIMES);
   populateSelect("k_time", TIMES);
 
-enableSearchableSelect("m_teacher_filter", "m_teacher");
-enableSearchableSelect("k_teacher_filter", "k_teacher");
-
-enableSearchableSelect("m_dept_filter", "m_dept");
-enableSearchableSelect("k_dept_filter", "k_dept");
-
-enableSearchableSelect("m_course_filter", "m_course");
-enableSearchableSelect("k_course_filter", "k_course");
-
-enableSearchableSelect("m_room_filter", "m_room");
-enableSearchableSelect("k_room_filter", "k_room");
-
-enableSearchableSelect("m_time_filter", "m_time");
-enableSearchableSelect("k_time_filter", "k_time");
+  enableSearchableSelect("m_teacher_filter", "m_teacher");
+  enableSearchableSelect("k_teacher_filter", "k_teacher");
+  enableSearchableSelect("m_dept_filter", "m_dept");
+  enableSearchableSelect("k_dept_filter", "k_dept");
+  enableSearchableSelect("m_course_filter", "m_course");
+  enableSearchableSelect("k_course_filter", "k_course");
+  enableSearchableSelect("m_room_filter", "m_room");
+  enableSearchableSelect("k_room_filter", "k_room");
+  enableSearchableSelect("m_time_filter", "m_time");
+  enableSearchableSelect("k_time_filter", "k_time");
 
   loadDashboard();
   loadPendingMakeup();
