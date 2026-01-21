@@ -166,25 +166,44 @@ function populateSelect(id, list) {
   });
 }
 
-function addFilter(inputId, selectId) {
-  const input = document.getElementById(inputId);
-  const select = document.getElementById(selectId);
-  if (!input || !select) return;
-
-  input.addEventListener("input", () => {
-    const q = input.value.toLowerCase();
-    [...select.options].forEach(o => {
-      o.hidden = !o.textContent.toLowerCase().includes(q);
-    });
-  });
-}
-
 async function postForm(payload) {
   const res = await fetch(API_URL, {
     method: "POST",
     body: new URLSearchParams(payload)
   });
   return res.json();
+}
+
+function enableSearchableSelect(filterId, selectId) {
+  const filter = document.getElementById(filterId);
+  const select = document.getElementById(selectId);
+
+  if (!filter || !select) return;
+
+  // Cache original options
+  const originalOptions = Array.from(select.options).map(o => ({
+    value: o.value,
+    text: o.textContent
+  }));
+
+  filter.addEventListener("input", () => {
+    const q = filter.value.toLowerCase().trim();
+
+    select.innerHTML = "";
+    originalOptions.forEach(o => {
+      if (!q || o.text.toLowerCase().includes(q)) {
+        const opt = document.createElement("option");
+        opt.value = o.value;
+        opt.textContent = o.text;
+        select.appendChild(opt);
+      }
+    });
+  });
+
+  // Sync input when user selects
+  select.addEventListener("change", () => {
+    filter.value = select.value;
+  });
 }
 
 /* =========================================================
@@ -361,8 +380,20 @@ window.addEventListener("DOMContentLoaded", () => {
   populateSelect("m_time", TIMES);
   populateSelect("k_time", TIMES);
 
-  addFilter("m_teacher_filter", "m_teacher");
-  addFilter("k_teacher_filter", "k_teacher");
+enableSearchableSelect("m_teacher_filter", "m_teacher");
+enableSearchableSelect("k_teacher_filter", "k_teacher");
+
+enableSearchableSelect("m_dept_filter", "m_dept");
+enableSearchableSelect("k_dept_filter", "k_dept");
+
+enableSearchableSelect("m_course_filter", "m_course");
+enableSearchableSelect("k_course_filter", "k_course");
+
+enableSearchableSelect("m_room_filter", "m_room");
+enableSearchableSelect("k_room_filter", "k_room");
+
+enableSearchableSelect("m_time_filter", "m_time");
+enableSearchableSelect("k_time_filter", "k_time");
 
   loadDashboard();
   loadPendingMakeup();
