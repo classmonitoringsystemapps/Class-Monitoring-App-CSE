@@ -392,3 +392,16 @@ window.addEventListener("scroll", () => {
     -webkit-overflow-scrolling: touch;
   }
 }
+
+@media (max-width:600px){
+  select{
+    display:none;
+    position:relative;
+    width:100%;
+    margin-top:6px;
+  }
+
+  select option{
+    padding:10px;
+  }
+}
