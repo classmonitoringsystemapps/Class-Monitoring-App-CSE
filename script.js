@@ -423,61 +423,64 @@ window.addEventListener("DOMContentLoaded", () => {
   populateSelect("m_time", TIMES);
   populateSelect("k_time", TIMES);
 
-  enableSearchableSelect("m_teacher_filter", "m_teacher");
-  enableSearchableSelect("k_teacher_filter", "k_teacher");
-  enableSearchableSelect("m_dept_filter", "m_dept");
-  enableSearchableSelect("k_dept_filter", "k_dept");
-  enableSearchableSelect("m_course_filter", "m_course");
-  enableSearchableSelect("k_course_filter", "k_course");
-  enableSearchableSelect("m_room_filter", "m_room");
-  enableSearchableSelect("k_room_filter", "k_room");
-  enableSearchableSelect("m_time_filter", "m_time");
-  enableSearchableSelect("k_time_filter", "k_time");
+  bindSmartDropdown("m_dept_filter", "m_dept");
+  bindSmartDropdown("m_course_filter", "m_course");
+  bindSmartDropdown("m_room_filter", "m_room");
+  bindSmartDropdown("m_time_filter", "m_time");
+  bindSmartDropdown("m_teacher_filter", "m_teacher");
+
+  bindSmartDropdown("k_dept_filter", "k_dept");
+  bindSmartDropdown("k_course_filter", "k_course");
+  bindSmartDropdown("k_room_filter", "k_room");
+  bindSmartDropdown("k_time_filter", "k_time");
+  bindSmartDropdown("k_teacher_filter", "k_teacher");
 
   loadDashboard();
   loadPendingMakeup();
-});
+}); 
 
 /* =========================================================
-   SMART SEARCH DROPDOWN (SAFE ADDITION)
+   MOBILE SMART DROPDOWN (FIXED)
 ========================================================= */
-document.addEventListener("input", e => {
-  const input = e.target;
-  if (!input.classList.contains("smart-filter")) return;
 
-  const select = document.getElementById(input.dataset.target);
-  if (!select) return;
+function bindSmartDropdown(filterId, selectId) {
+  const filter = document.getElementById(filterId);
+  const select = document.getElementById(selectId);
 
-  const q = input.value.toLowerCase().trim();
+  if (!filter || !select) return;
 
-  Array.from(select.options).forEach(opt => {
-    opt.style.display =
-      !q || opt.text.toLowerCase().includes(q) ? "" : "none";
+  // Show dropdown on focus
+  filter.addEventListener("focus", () => {
+    select.style.display = "block";
   });
-});
 
-/* Touch + mouse support */
-document.addEventListener("pointerdown", e => {
-  if (e.target.tagName !== "OPTION") return;
+  // Filter options
+  filter.addEventListener("input", () => {
+    const q = filter.value.toLowerCase();
 
-  const select = e.target.parentElement;
-  const input = document.querySelector(
-    `.smart-filter[data-target="${select.id}"]`
-  );
+    let found = false;
+    [...select.options].forEach(opt => {
+      const match = opt.text.toLowerCase().includes(q);
+      opt.style.display = match ? "" : "none";
+      if (match) found = true;
+    });
 
-  if (!input) return;
+    select.style.display = found ? "block" : "none";
+  });
 
-  input.value = e.target.value;
-});
+  // Select option
+  select.addEventListener("change", () => {
+    filter.value = select.value;
+    select.style.display = "none";
+  });
 
-/* Close dropdown when clicking outside */
-document.addEventListener("focusin", e => {
-  if (!e.target.classList.contains("smart-filter")) {
-    document
-      .querySelectorAll(".smart-filter")
-      .forEach(i => i.blur());
-  }
-});
+  // Close when clicking outside
+  document.addEventListener("click", e => {
+    if (!filter.contains(e.target) && !select.contains(e.target)) {
+      select.style.display = "none";
+    }
+  });
+}
 
 /* =========================================================
    SERVICE WORKER
