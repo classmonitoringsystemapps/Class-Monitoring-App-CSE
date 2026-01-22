@@ -406,3 +406,26 @@ bindSmartDropdown("k_time_filter", "k_time");
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
 }
+/* =========================================================
+   MOBILE SMART DROPDOWN ENABLE
+========================================================= */
+document.addEventListener("click", e => {
+  if (!e.target.classList.contains("filter")) {
+    document.querySelectorAll(".filter").forEach(f =>
+      f.classList.remove("show")
+    );
+  }
+});
+
+document.querySelectorAll(".filter").forEach(input => {
+  input.addEventListener("focus", () => {
+    document.querySelectorAll(".filter").forEach(f =>
+      f.classList.remove("show")
+    );
+    input.classList.add("show");
+  });
+
+  input.addEventListener("input", () => {
+    input.classList.add("show");
+  });
+});
