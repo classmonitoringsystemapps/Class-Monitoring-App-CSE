@@ -365,3 +365,30 @@ window.addEventListener("scroll", () => {
     logo.style.visibility = "visible";
   }
 });
+
+/* ================= SMART DROPDOWN (MOBILE SAFE) ================= */
+.smart-filter + select {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 999;
+  background: #fff;
+  border-radius: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  display: none;
+}
+
+.smart-filter:focus + select,
+.smart-filter.show + select {
+  display: block;
+}
+
+/* Mobile touch fix */
+@media (max-width: 600px) {
+  .smart-filter + select {
+    font-size: 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+}
