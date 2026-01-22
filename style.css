@@ -193,25 +193,42 @@ footer small{
   .header-left .subtitle{ font-size:13px; }
   .dashboard{ grid-template-columns:repeat(2,1fr); }
 }
-/* ================= MOBILE DROPDOWN FIX ================= */
+
+/* ================= MATERIAL MOBILE DROPDOWN ================= */
 @media (max-width: 600px) {
-  .filter {
-    cursor: pointer;
+
+  .smart-filter{
+    font-size:16px;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
   }
 
-  .filter + select {
-    display: none;
-    margin-top: 6px;
+  .smart-filter + select{
+    display:none;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    background:#ffffff;
+    border-radius:12px;
+    max-height:240px;
+    overflow-y:auto;
+    z-index:2000;
+    box-shadow:0 12px 28px rgba(0,0,0,.18);
   }
 
-  .filter.show + select {
-    display: block;
+  .smart-filter.show + select{
+    display:block;
   }
 
-  select {
-    font-size: 16px;
-    max-height: 220px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+  .smart-filter + select option{
+    padding:14px 16px;
+    font-size:16px;
+  }
+
+  .smart-filter + select option.highlight{
+    background:#e0f2fe;
+    font-weight:600;
   }
 }
