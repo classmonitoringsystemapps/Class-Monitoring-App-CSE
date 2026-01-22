@@ -3,10 +3,7 @@
 ========================================================= */
 const API_URL =
   "https://script.google.com/macros/s/AKfycbxTV_Z5NP6TseOx8iT3wS6wefpK7hNt-pv0np5grnbuTiLw6h66x6XVs-vnqztAXz_aSA/exec";
-
-/* =========================================================
-   MASTER LISTS
-========================================================= */
+/* ---------- MASTER LISTS ---------- */
 const TEACHERS = [
 "Dr. Sheak Rashed Haider Noori (SRH)","Dr. S.M Aminul Haque (SMAH)","Dr. Arif Mahmud (AM)",
 "Dr. Md. Fokhray Hossain (MFH)","Professor Dr. Md. Adnan Kiber (MAK)","Professor Dr. Fernaz Narin Nur (FNN)",
@@ -88,21 +85,18 @@ const TIMES = [
 ];
 
 /* =========================================================
-   DATE FORMATTER (BD TIME → 20 Jan 2026, 04:02 pm)
+   DATE FORMATTER (BD TIME)
 ========================================================= */
-function formatBDDateTimeFromInput(value) {
-  if (!value) return "";
+function formatBDDateTimeFromInput(dateValue) {
+  if (!dateValue) return "";
 
-  // Current time in Bangladesh
   const nowBD = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
   );
 
-  // Date from input (YYYY-MM-DD)
-  const d = new Date(value);
+  const d = new Date(dateValue);
   if (isNaN(d)) return "";
 
-  // Merge selected date + current BD time
   const finalDate = new Date(
     d.getFullYear(),
     d.getMonth(),
@@ -112,20 +106,15 @@ function formatBDDateTimeFromInput(value) {
     0
   );
 
-  // Format output
-  return finalDate
-    .toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-      timeZone: "Asia/Dhaka"
-    })
-    .replace(",", "")              // remove extra comma
-    .replace(" am", " am")
-    .replace(" pm", " pm");
+  return finalDate.toLocaleString("en-GB", {
+    timeZone: "Asia/Dhaka",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
 }
 
 /* =========================================================
@@ -153,10 +142,10 @@ function loadDashboard() {
     .then(d => {
       if (d.status !== "success") return;
 
-      animateCount(totalMissed, d.totalMissed || 0);
-      animateCount(completed, d.completed || 0);
-      animateCount(pending, d.pending || 0);
-      animateCount(extraCount, d.extra || 0);
+      animateCount(document.getElementById("totalMissed"), d.totalMissed || 0);
+      animateCount(document.getElementById("completed"), d.completed || 0);
+      animateCount(document.getElementById("pending"), d.pending || 0);
+      animateCount(document.getElementById("extraCount"), d.extra || 0);
     })
     .catch(console.error);
 }
@@ -177,6 +166,19 @@ function populateSelect(id, list) {
   });
 }
 
+function addFilter(inputId, selectId) {
+  const input = document.getElementById(inputId);
+  const select = document.getElementById(selectId);
+  if (!input || !select) return;
+
+  input.addEventListener("input", () => {
+    const q = input.value.toLowerCase();
+    [...select.options].forEach(o => {
+      o.hidden = !o.textContent.toLowerCase().includes(q);
+    });
+  });
+}
+
 async function postForm(payload) {
   const res = await fetch(API_URL, {
     method: "POST",
@@ -185,38 +187,10 @@ async function postForm(payload) {
   return res.json();
 }
 
-function enableSearchableSelect(filterId, selectId) {
-  const filter = document.getElementById(filterId);
-  const select = document.getElementById(selectId);
-  if (!filter || !select) return;
-
-  const original = Array.from(select.options).map(o => ({
-    value: o.value,
-    text: o.textContent
-  }));
-
-  filter.addEventListener("input", () => {
-    const q = filter.value.toLowerCase().trim();
-    select.innerHTML = "";
-    original.forEach(o => {
-      if (!q || o.text.toLowerCase().includes(q)) {
-        const opt = document.createElement("option");
-        opt.value = o.value;
-        opt.textContent = o.text;
-        select.appendChild(opt);
-      }
-    });
-  });
-
-  select.addEventListener("change", () => {
-    filter.value = select.value;
-  });
-}
-
 /* =========================================================
-   MISSED CLASS (WITH WATERMARK)
+   MISSED CLASS (COMBINED + WATERMARK)
 ========================================================= */
-missedForm.addEventListener("submit", async e => {
+missedForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const watermark = `CMS | Missed | ${new Date().toLocaleString("en-GB", {
@@ -235,21 +209,35 @@ missedForm.addEventListener("submit", async e => {
     watermark
   };
 
-  const res = await postForm(payload);
+  // Required field validation
+  for (const key in payload) {
+    if (!payload[key]) {
+      alert("⚠️ Please fill all required fields");
+      return;
+    }
+  }
 
-  if (res.status === "success") {
-    alert("✅ Missed class saved");
-    e.target.reset();
-    loadDashboard();
-  } else {
-    alert(res.message || "❌ Failed to save missed class");
+  try {
+    const res = await postForm(payload);
+
+    if (res.status === "success") {
+      alert("✅ Missed class saved");
+      e.target.reset();
+      loadDashboard();
+    } else {
+      alert(res.message || "❌ Failed to save missed class");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("❌ Server error while saving missed class");
   }
 });
 
+
 /* =========================================================
-   MAKEUP CLASS (WITH WATERMARK)
+   MAKEUP CLASS (COMBINED + WATERMARK + ROOM CHECK)
 ========================================================= */
-makeupForm.addEventListener("submit", async e => {
+makeupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const watermark = `CMS | Makeup | ${new Date().toLocaleString("en-GB", {
@@ -270,22 +258,29 @@ makeupForm.addEventListener("submit", async e => {
     watermark
   };
 
-  for (const k in payload) {
-    if (!payload[k] && k !== "remarks") {
+  // Required field validation (remarks optional)
+  for (const key in payload) {
+    if (!payload[key] && key !== "remarks") {
       alert("⚠️ Please fill all required fields");
       return;
     }
   }
 
-  const res = await postForm(payload);
+  try {
+    const res = await postForm(payload);
 
-  if (res.status === "success") {
-    alert("✅ Makeup class saved");
-    e.target.reset();
-    loadPendingMakeup();
-    loadDashboard();
-  } else {
-    alert(res.message || "❌ Room already booked for this slot");
+    if (res.status === "success") {
+      alert("✅ Makeup class saved");
+      e.target.reset();
+      loadPendingMakeup();
+      loadDashboard();
+    } else {
+      // 👇 Custom message for room clash
+      alert(res.message || "❌ Room already booked for this time slot");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("❌ Server error while saving makeup class");
   }
 });
 
@@ -293,13 +288,8 @@ makeupForm.addEventListener("submit", async e => {
    PENDING MAKEUP
 ========================================================= */
 function updateMakeup(row) {
-  const statusEl = document.getElementById(`status_${row}`);
-  const remarksEl = document.getElementById(`remarks_${row}`);
-
-  if (!statusEl) return;
-
-  const status = statusEl.value;
-  const remarks = remarksEl ? remarksEl.value.trim() : "";
+  const status = document.getElementById(`status_${row}`).value;
+  const remarks = document.getElementById(`remarks_${row}`).value || "";
 
   fetch(
     `${API_URL}?action=update_makeup&row=${row}&status=${status}&remarks=${encodeURIComponent(remarks)}`
@@ -313,8 +303,7 @@ function updateMakeup(row) {
       } else {
         alert(res.message || "❌ Update failed");
       }
-    })
-    .catch(console.error);
+    });
 }
 
 function loadPendingMakeup() {
@@ -333,39 +322,41 @@ function loadPendingMakeup() {
       }
 
       res.data.forEach(r => {
-        tbody.insertAdjacentHTML(
-          "beforeend",
-          `
-<tr>
-  <td>${r.scheduleDate}</td>
-  <td>${r.department}</td>
-  <td>${r.course}</td>
-  <td>${r.teacher}</td>
-  <td>${r.makeupDate}</td>
-  <td>${r.makeupTime}</td>
-  <td>${r.makeupRoom}</td>
-  <td>
-    <select id="status_${r.row}">
-      <option value="" disabled selected hidden>${r.status}</option>
-      <option value="Pending">Pending</option>
-      <option value="Completed">Completed</option>
-    </select>
-  </td>
-  <td>
-    <input
-      id="remarks_${r.row}"
-      value="${r.remarks || ""}"
-      placeholder="Attendance link provide"
-    >
-    <button onclick="updateMakeup(${r.row})">Update</button>
-  </td>
-</tr>
-          `
-        );
+        tbody.insertAdjacentHTML("beforeend", `
+          <tr>
+            <td>${r.scheduleDate}</td>
+            <td>${r.department}</td>
+            <td>${r.course}</td>
+            <td>${r.teacher}</td>
+            <td>${r.makeupDate}</td>
+            <td>${r.makeupTime}</td>
+            <td>${r.makeupRoom}</td>
+            <td>
+              <select id="status_${r.row}">
+                <option ${r.status === "Pending" ? "selected" : ""}>Pending</option>
+                <option ${r.status === "Completed" ? "selected" : ""}>Completed</option>
+              </select>
+            </td>
+            <td>
+              <input id="remarks_${r.row}" value="${r.remarks || ""}">
+              <button onclick="updateMakeup(${r.row})">Update</button>
+            </td>
+          </tr>
+        `);
       });
-    })
-    .catch(console.error);
+    });
 }
+
+/* =========================================================
+   FILTER PENDING BY TEACHER
+========================================================= */
+pendingTeacherSearch.addEventListener("input", e => {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll("#pendingTable tbody tr").forEach(tr => {
+    tr.style.display =
+      tr.cells[3].textContent.toLowerCase().includes(q) ? "" : "none";
+  });
+});
 
 /* =========================================================
    INITIAL LOAD
@@ -382,16 +373,8 @@ window.addEventListener("DOMContentLoaded", () => {
   populateSelect("m_time", TIMES);
   populateSelect("k_time", TIMES);
 
-  enableSearchableSelect("m_teacher_filter", "m_teacher");
-  enableSearchableSelect("k_teacher_filter", "k_teacher");
-  enableSearchableSelect("m_dept_filter", "m_dept");
-  enableSearchableSelect("k_dept_filter", "k_dept");
-  enableSearchableSelect("m_course_filter", "m_course");
-  enableSearchableSelect("k_course_filter", "k_course");
-  enableSearchableSelect("m_room_filter", "m_room");
-  enableSearchableSelect("k_room_filter", "k_room");
-  enableSearchableSelect("m_time_filter", "m_time");
-  enableSearchableSelect("k_time_filter", "k_time");
+  addFilter("m_teacher_filter", "m_teacher");
+  addFilter("k_teacher_filter", "k_teacher");
 
   loadDashboard();
   loadPendingMakeup();
