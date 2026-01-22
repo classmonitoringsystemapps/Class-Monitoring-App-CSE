@@ -214,6 +214,47 @@ function enableSearchableSelect(filterId, selectId) {
 }
 
 /* =========================================================
+   SMART SEARCH DROPDOWN (MOBILE FRIENDLY)
+========================================================= */
+document.addEventListener("input", e => {
+  const input = e.target;
+  if (!input.classList.contains("smart-filter")) return;
+
+  const select = document.getElementById(input.dataset.target);
+  const q = input.value.toLowerCase();
+
+  input.classList.add("show");
+
+  Array.from(select.options).forEach(opt => {
+    opt.style.display = opt.text.toLowerCase().includes(q) ? "" : "none";
+  });
+});
+
+/* Use pointerdown instead of click (mobile safe) */
+document.addEventListener("pointerdown", e => {
+  if (e.target.tagName === "OPTION") {
+    const select = e.target.parentElement;
+    const input = document.querySelector(
+      `.smart-filter[data-target="${select.id}"]`
+    );
+
+    if (input) {
+      input.value = e.target.value;
+      input.classList.remove("show");
+    }
+  }
+});
+
+/* Close dropdown when focus leaves */
+document.addEventListener("focusin", e => {
+  if (!e.target.classList.contains("smart-filter")) {
+    document.querySelectorAll(".smart-filter").forEach(i =>
+      i.classList.remove("show")
+    );
+  }
+});
+
+/* =========================================================
    MISSED CLASS (WITH WATERMARK)
 ========================================================= */
 missedForm.addEventListener("submit", async e => {
@@ -395,6 +436,47 @@ window.addEventListener("DOMContentLoaded", () => {
 
   loadDashboard();
   loadPendingMakeup();
+});
+
+/* =========================================================
+   SMART SEARCH DROPDOWN (SAFE ADDITION)
+========================================================= */
+document.addEventListener("input", e => {
+  const input = e.target;
+  if (!input.classList.contains("smart-filter")) return;
+
+  const select = document.getElementById(input.dataset.target);
+  if (!select) return;
+
+  const q = input.value.toLowerCase().trim();
+
+  Array.from(select.options).forEach(opt => {
+    opt.style.display =
+      !q || opt.text.toLowerCase().includes(q) ? "" : "none";
+  });
+});
+
+/* Touch + mouse support */
+document.addEventListener("pointerdown", e => {
+  if (e.target.tagName !== "OPTION") return;
+
+  const select = e.target.parentElement;
+  const input = document.querySelector(
+    `.smart-filter[data-target="${select.id}"]`
+  );
+
+  if (!input) return;
+
+  input.value = e.target.value;
+});
+
+/* Close dropdown when clicking outside */
+document.addEventListener("focusin", e => {
+  if (!e.target.classList.contains("smart-filter")) {
+    document
+      .querySelectorAll(".smart-filter")
+      .forEach(i => i.blur());
+  }
 });
 
 /* =========================================================
