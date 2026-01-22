@@ -176,56 +176,61 @@ async function postForm(payload) {
 }
 
 /* =========================================================
-   SMART DROPDOWN (MOBILE SAFE – FINAL FIX)
+   MATERIAL MOBILE DROPDOWN (AUTO-HIGHLIGHT)
 ========================================================= */
-function bindSmartDropdown(filterId, selectId) {
+function bindMaterialDropdown(filterId, selectId) {
   const filter = document.getElementById(filterId);
   const select = document.getElementById(selectId);
   if (!filter || !select) return;
 
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  let firstMatch = null;
 
-  select.size = 6;
-  select.hidden = true;
-
-  function applyFilter() {
-    const q = filter.value.toLowerCase().trim();
-    let found = false;
-
-    [...select.options].forEach(opt => {
-      const match = opt.text.toLowerCase().includes(q);
-      opt.hidden = !match;
-      if (match) found = true;
-    });
-
-    if (found) {
-      select.hidden = false;
-      if (isMobile) select.focus(); // 🔑 mobile force open
-    } else {
-      select.hidden = true;
-    }
+  function open(){
+    filter.classList.add("show");
+    select.classList.add("show");
   }
 
-  filter.addEventListener("input", applyFilter);
-  filter.addEventListener("focus", applyFilter);
+  function close(){
+    filter.classList.remove("show");
+    select.classList.remove("show");
+  }
 
-  select.addEventListener("change", () => {
-    filter.value = select.value;
-    select.hidden = true;
+  filter.addEventListener("focus", open);
+  filter.addEventListener("click", open);
+
+  filter.addEventListener("input", () => {
+    const q = filter.value.toLowerCase().trim();
+    firstMatch = null;
+
+    [...select.options].forEach(opt => {
+      opt.classList.remove("highlight");
+
+      const match = !q || opt.text.toLowerCase().includes(q);
+      opt.style.display = match ? "" : "none";
+
+      if (match && !firstMatch) {
+        firstMatch = opt;
+      }
+    });
+
+    if (firstMatch) firstMatch.classList.add("highlight");
+    open();
   });
 
-  document.addEventListener("touchstart", e => {
-    if (!filter.contains(e.target) && !select.contains(e.target)) {
-      select.hidden = true;
-    }
+  select.addEventListener("click", e => {
+    if (e.target.tagName !== "OPTION") return;
+    filter.value = e.target.value;
+    select.value = e.target.value;
+    close();
   });
 
-  document.addEventListener("mousedown", e => {
+  document.addEventListener("click", e => {
     if (!filter.contains(e.target) && !select.contains(e.target)) {
-      select.hidden = true;
+      close();
     }
   });
 }
+
 
 /* =========================================================
    MISSED CLASS FORM VALIDATION
@@ -372,32 +377,63 @@ function loadPendingMakeup() {
 }
 
 /* =========================================================
-   INITIAL LOAD
+   INITIAL LOAD (CLEAN & FINAL)
 ========================================================= */
-
 window.addEventListener("DOMContentLoaded", () => {
-bindSmartDropdown("m_teacher_filter", "m_teacher");
-bindSmartDropdown("m_course_filter", "m_course");
-bindSmartDropdown("m_room_filter", "m_room");
-bindSmartDropdown("m_time_filter", "m_time");
 
-bindSmartDropdown("k_teacher_filter", "k_teacher");
-bindSmartDropdown("k_course_filter", "k_course");
-bindSmartDropdown("k_room_filter", "k_room");
-bindSmartDropdown("k_time_filter", "k_time");
+  /* ---------- POPULATE SELECT OPTIONS ---------- */
+  populateSelect("m_teacher", TEACHERS);
+  populateSelect("k_teacher", TEACHERS);
 
-  const lists = ["m_teacher","k_teacher","m_dept","k_dept","m_course","k_course","m_room","k_room","m_time","k_time"];
-  const dataLists = [TEACHERS, TEACHERS, DEPARTMENTS, DEPARTMENTS, COURSES, COURSES, ROOMS, ROOMS, TIMES, TIMES];
-  lists.forEach((id, i) => populateSelect(id, dataLists[i]));
+  populateSelect("m_dept", DEPARTMENTS);
+  populateSelect("k_dept", DEPARTMENTS);
 
-  const filters = ["m_dept_filter","m_course_filter","m_room_filter","m_time_filter","m_teacher_filter",
-                   "k_dept_filter","k_course_filter","k_room_filter","k_time_filter","k_teacher_filter"];
-  const selects = ["m_dept","m_course","m_room","m_time","m_teacher",
-                   "k_dept","k_course","k_room","k_time","k_teacher"];
-  filters.forEach((f, i) => bindSmartDropdown(f, selects[i]));
+  populateSelect("m_course", COURSES);
+  populateSelect("k_course", COURSES);
 
+  populateSelect("m_room", ROOMS);
+  populateSelect("k_room", ROOMS);
+
+  populateSelect("m_time", TIMES);
+  populateSelect("k_time", TIMES);
+
+/* =========================================================
+   MATERIAL MOBILE DROPDOWN (SAFE)
+========================================================= */
+function bindMaterialDropdown(filterId, selectId) {
+  const filter = document.getElementById(filterId);
+  const select = document.getElementById(selectId);
+  if (!filter || !select) return;
+
+  filter.addEventListener("input", () => {
+    const q = filter.value.toLowerCase().trim();
+    if (!q) return;
+
+    let matched = false;
+
+    for (const opt of select.options) {
+      if (opt.value.toLowerCase().includes(q)) {
+        select.value = opt.value;   // ✅ auto-select
+        matched = true;
+        break;
+      }
+    }
+
+    // Optional visual hint
+    filter.style.borderColor = matched ? "#16a34a" : "#ef4444";
+  });
+
+  // Keep filter text synced when user taps select manually
+  select.addEventListener("change", () => {
+    filter.value = select.value;
+    filter.style.borderColor = "#d1d5db";
+  });
+}
+
+  /* ---------- DASHBOARD & PENDING ---------- */
   loadDashboard();
   loadPendingMakeup();
+
 });
 
 /* =========================================================
@@ -406,6 +442,7 @@ bindSmartDropdown("k_time_filter", "k_time");
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
 }
+
 /* =========================================================
    MOBILE SMART DROPDOWN ENABLE
 ========================================================= */
