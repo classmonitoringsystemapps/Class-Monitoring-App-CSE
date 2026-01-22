@@ -405,3 +405,281 @@ window.addEventListener("scroll", () => {
     padding:10px;
   }
 }
+/* =========================================================
+   FIXED DIU LOGO (PERMANENT – NO SCROLL MOVE)
+========================================================= */
+/* Mobile adjustment */
+@media (max-width: 600px) {
+  .logo-wrap {
+    top: 60px;
+  }
+
+  .app-logo {
+    width: 52px;
+  }
+}
+
+/* =========================================================
+   DASHBOARD + CENTER LOGO (DIU STANDARD)
+========================================================= */
+
+.dashboard-header {
+  padding: 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* ===== BRAND CENTER ===== */
+.brand-center {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.diu-logo {
+  height: 80px;          /* ✅ STANDARD SIZE */
+  width: auto;
+  display: block;
+  margin: 0 auto 8px;
+}
+
+.brand-center h1 {
+  font-size: 20px;
+  margin: 0;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.brand-center p {
+  font-size: 13px;
+  margin: 4px 0 0;
+  color: #64748b;
+}
+
+/* ===== DASHBOARD ===== */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.dashboard .card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.dashboard .card span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.dashboard .card strong {
+  font-size: 22px;
+  color: #0f172a;
+}
+
+/* ===== MOBILE FIX ===== */
+@media (max-width: 768px) {
+  .diu-logo {
+    height: 70px; /* mobile standard */
+  }
+
+  .dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* ================= DIU HEADER ================= */
+.diu-header {
+  background: linear-gradient(135deg, #0047ab, #007bff);
+  color: #fff;
+  padding: 20px 16px 24px;
+  border-radius: 0 0 22px 22px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* BRAND */
+.brand-center {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.diu-logo {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 8px;
+}
+
+.brand-center h1 {
+  font-size: 1.4rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.brand-center p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+/* ================= DASHBOARD ================= */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  border-radius: 14px;
+  padding: 12px 6px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card span {
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.card strong {
+  display: block;
+  font-size: 1.6rem;
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+/* CARD COLORS */
+.card.total { background: linear-gradient(135deg, #ff4e50, #f9d423); }
+.card.completed { background: linear-gradient(135deg, #00c853, #64dd17); }
+.card.pending { background: linear-gradient(135deg, #ff9100, #ffcc80); }
+.card.extra { background: linear-gradient(135deg, #7c4dff, #b388ff); }
+
+/* ================= MOBILE ================= */
+@media (max-width: 600px) {
+  .dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* ================= HEADER ================= */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 10px;
+  background: #0a7e4a;
+  color: #fff;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.app-header .logo-wrap {
+  flex-shrink: 0;
+}
+
+.app-header .app-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.app-header .header-left h1 {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.app-header .header-left .subtitle {
+  font-size: 0.75rem;
+  margin: 2px 0 0;
+}
+
+/* ================= DASHBOARD WRAPPER ================= */
+.dashboard-wrapper {
+  max-width: 600px;
+  margin: 0 auto 16px auto;
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ================= DASHBOARD CARDS ================= */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.dashboard .card {
+  background: #ffffffcc;
+  color: #0a7e4a;
+  border-radius: 10px;
+  padding: 10px 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
+}
+
+.dashboard .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+.dashboard .card span,
+.dashboard .card .card-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+  color: #333;
+}
+
+.dashboard .card strong {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+/* Semantic colors */
+.dashboard .card.total-missed { background: #ffebee; color: #d32f2f; }
+.dashboard .card.completed   { background: #e8f5e9; color: #388e3c; }
+.dashboard .card.pending     { background: #fffde7; color: #fbc02d; }
+.dashboard .card.extra       { background: #e3f2fd; color: #1976d2; }
+
+/* Responsive for mobile */
+@media (max-width: 500px) {
+  .dashboard {
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 8px;
+  }
+
+  .dashboard .card strong { font-size: 1rem; }
+  .dashboard .card span { font-size: 0.65rem; }
+  .app-header .app-logo { width: 40px; height: 40px; }
+  .app-header .header-left h1 { font-size: 1rem; }
+  .app-header .header-left .subtitle { font-size: 0.65rem; }
+}
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px; /* optional spacing */
+}
+
+.app-logo {
+  width: 80px;    /* increase width */
+  height: 80px;   /* maintain square */
+  object-fit: contain;
+}
+@media (max-width: 500px) {
+  .app-logo {
+    width: 00px;
+    height: 50px;
+  }
+}
