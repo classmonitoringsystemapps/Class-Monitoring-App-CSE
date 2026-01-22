@@ -176,36 +176,53 @@ async function postForm(payload) {
 }
 
 /* =========================================================
-   MOBILE SMART DROPDOWN (UNIVERSAL)
+   SMART DROPDOWN (MOBILE SAFE – FINAL FIX)
 ========================================================= */
 function bindSmartDropdown(filterId, selectId) {
   const filter = document.getElementById(filterId);
   const select = document.getElementById(selectId);
   if (!filter || !select) return;
 
-  filter.addEventListener("focus", () => select.style.display = "block");
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-  filter.addEventListener("input", () => {
-    const q = filter.value.toLowerCase();
+  select.size = 6;
+  select.hidden = true;
+
+  function applyFilter() {
+    const q = filter.value.toLowerCase().trim();
     let found = false;
+
     [...select.options].forEach(opt => {
       const match = opt.text.toLowerCase().includes(q);
-      opt.style.display = match ? "" : "none";
+      opt.hidden = !match;
       if (match) found = true;
     });
-    select.style.display = found ? "block" : "none";
+
+    if (found) {
+      select.hidden = false;
+      if (isMobile) select.focus(); // 🔑 mobile force open
+    } else {
+      select.hidden = true;
+    }
+  }
+
+  filter.addEventListener("input", applyFilter);
+  filter.addEventListener("focus", applyFilter);
+
+  select.addEventListener("change", () => {
+    filter.value = select.value;
+    select.hidden = true;
   });
 
-  select.addEventListener("pointerdown", e => {
-    if (e.target.tagName === "OPTION") {
-      filter.value = e.target.value;
-      select.style.display = "none";
+  document.addEventListener("touchstart", e => {
+    if (!filter.contains(e.target) && !select.contains(e.target)) {
+      select.hidden = true;
     }
   });
 
-  document.addEventListener("click", e => {
+  document.addEventListener("mousedown", e => {
     if (!filter.contains(e.target) && !select.contains(e.target)) {
-      select.style.display = "none";
+      select.hidden = true;
     }
   });
 }
@@ -357,7 +374,18 @@ function loadPendingMakeup() {
 /* =========================================================
    INITIAL LOAD
 ========================================================= */
+
 window.addEventListener("DOMContentLoaded", () => {
+bindSmartDropdown("m_teacher_filter", "m_teacher");
+bindSmartDropdown("m_course_filter", "m_course");
+bindSmartDropdown("m_room_filter", "m_room");
+bindSmartDropdown("m_time_filter", "m_time");
+
+bindSmartDropdown("k_teacher_filter", "k_teacher");
+bindSmartDropdown("k_course_filter", "k_course");
+bindSmartDropdown("k_room_filter", "k_room");
+bindSmartDropdown("k_time_filter", "k_time");
+
   const lists = ["m_teacher","k_teacher","m_dept","k_dept","m_course","k_course","m_room","k_room","m_time","k_time"];
   const dataLists = [TEACHERS, TEACHERS, DEPARTMENTS, DEPARTMENTS, COURSES, COURSES, ROOMS, ROOMS, TIMES, TIMES];
   lists.forEach((id, i) => populateSelect(id, dataLists[i]));
