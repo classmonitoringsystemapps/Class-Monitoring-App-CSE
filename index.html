@@ -9,12 +9,6 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0A7E4A">
 
-  <!-- iOS SUPPORT -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="DIU Dropout">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-
   <!-- STYLE -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -22,164 +16,176 @@
 <body>
 
 <!-- ================= DASHBOARD ================= -->
-<div class="dashboard">
+<section class="dashboard">
   <div class="card total-missed">
-    Total Missed
-    <span id="totalMissed">0</span>
+    <span>Total Missed</span>
+    <strong id="totalMissed">0</strong>
   </div>
 
   <div class="card">
-    Makeup Completed
-    <span id="completed">0</span>
+    <span>Makeup Completed</span>
+    <strong id="completed">0</strong>
   </div>
 
   <div class="card">
-    Makeup Pending
-    <span id="pending">0</span>
+    <span>Makeup Pending</span>
+    <strong id="pending">0</strong>
   </div>
 
   <div class="card">
-    Extra Classes
-    <span id="extraCount">0</span>
+    <span>Extra Classes</span>
+    <strong id="extraCount">0</strong>
   </div>
-</div>
+</section>
 
+<!-- ================= HEADER ================= -->
 <header>
-  <h1>Class Monitoring App</h1>
-  <p class="subtitle">Missed & Makeup Class Entry — CSE-DIU</p>
-
   <div class="logo-wrap">
     <img src="icon-512.svg" alt="App Logo" class="app-logo">
   </div>
+  <h1>Class Monitoring App</h1>
+  <p class="subtitle">Missed &amp; Makeup Class Entry — CSE-DIU</p>
 </header>
 
+<!-- ================= MAIN ================= -->
 <main class="container">
 
-  <!-- ================= BUTTON CONTROLS ================= -->
+  <!-- ================= CONTROLS ================= -->
   <div class="controls">
-    <button id="btn-missed">Missed Class Entry</button>
-    <button id="btn-makeup">Makeup Class Entry</button>
-    <button id="btn_pending">Pending Makeup</button>
+    <button type="button" id="btn-missed">Missed Class Entry</button>
+    <button type="button" id="btn-makeup">Makeup Class Entry</button>
+    <button type="button" id="btn_pending">Pending Makeup</button>
   </div>
 
+  <!-- ================= CLASS ENTRY (COMBINED SLOT) ================= -->
+<section class="class-entry watermark">
+
+  <!-- Watermark -->
+  <span class="form-watermark">Class Monitoring System</span>
+
   <!-- ================= MISSED CLASS ================= -->
-  <form id="missedForm" class="form hidden" autocomplete="off">
-    <h2>Missed Class Entry</h2>
+<form id="missedForm" class="form hidden watermark" autocomplete="off" novalidate>
+  <h2>Missed Class Entry</h2>
+  <span class="form-watermark">Class Monitoring System</span>
 
-    <div class="grid">
-      <label>Date
-        <input type="date" id="m_date" required>
-      </label>
+  <div class="grid">
+    <label>Date
+      <input type="date" id="m_date" required>
+    </label>
 
-      <label>Department
-        <input type="text" id="m_dept_filter" class="filter" placeholder="Search department...">
-        <select id="m_dept" required></select>
-      </label>
-    </div>
+    <label>Department
+      <input type="text" class="smart-filter" data-target="m_dept" placeholder="Search department…">
+      <select id="m_dept" size="6" required></select>
+    </label>
+  </div>
 
-    <div class="grid">
-      <label>Course Code
-        <input type="text" id="m_course_filter" class="filter">
-        <select id="m_course" size="6" required></select>
-      </label>
+  <div class="grid">
+    <label>Course Code
+      <input type="text" class="smart-filter" data-target="m_course" placeholder="Search course…">
+      <select id="m_course" size="6" required></select>
+    </label>
 
-      <label>Room
-        <input type="text" id="m_room_filter" class="filter">
-        <select id="m_room" size="6"></select>
-      </label>
-    </div>
+    <label>Room
+      <input type="text" class="smart-filter" data-target="m_room" placeholder="Search room…">
+      <select id="m_room" size="6"></select>
+    </label>
+  </div>
 
-    <div class="grid">
-      <label>Time Slot
-        <input type="text" id="m_time_filter" class="filter">
-        <select id="m_time" size="6"></select>
-      </label>
+  <div class="grid">
+    <label>Time Slot
+      <input type="text" class="smart-filter" data-target="m_time" placeholder="Search time…">
+      <select id="m_time" size="6"></select>
+    </label>
 
-      <label>Teacher Initial
-        <input type="text" id="m_teacher_filter" class="filter">
-        <select id="m_teacher" size="6" required></select>
-      </label>
-    </div>
+    <label>Teacher Initial
+      <input type="text" class="smart-filter" data-target="m_teacher" placeholder="Search teacher…">
+      <select id="m_teacher" size="6" required></select>
+    </label>
+  </div>
 
-    <label>Reason
-      <select id="m_reason" required>
-        <option value="">Select reason</option>
-        <option>Leave</option>
-        <option>Sick</option>
-        <option>Student Absent</option>
-        <option>Absent</option>
-        <option>Both are Absent</option>
-        <option>Due to an Emergency</option>
+  <label>Reason
+    <select id="m_reason" required>
+      <option value="">Select reason</option>
+      <option>Leave</option>
+      <option>Sick</option>
+      <option>Student Absent</option>
+      <option>Absent</option>
+      <option>Meeting</option>
+      <option>Both are Absent</option>
+      <option>Due to an Emergency</option>
+    </select>
+  </label>
+
+  <button type="submit" class="submit">Submit Missed Class</button>
+</form>
+
+<!-- ================= MAKEUP CLASS ================= -->
+<form id="makeupForm" class="form hidden watermark" autocomplete="off" novalidate>
+  <h2>Makeup Class Entry</h2>
+  <span class="form-watermark">Class Monitoring System</span>
+
+  <div class="grid">
+    <label>Schedule Date
+      <input type="date" id="k_schedule" required>
+    </label>
+
+    <label>Department
+      <input type="text" class="smart-filter" data-target="k_dept" placeholder="Search department…">
+      <select id="k_dept" required></select>
+    </label>
+  </div>
+
+  <div class="grid">
+    <label>Course Code
+      <input type="text" class="smart-filter" data-target="k_course" placeholder="Search course…">
+      <select id="k_course" size="6" required></select>
+    </label>
+
+    <label>Teacher Initial
+      <input type="text" class="smart-filter" data-target="k_teacher" placeholder="Search teacher…">
+      <select id="k_teacher" size="6" required></select>
+    </label>
+  </div>
+
+  <div class="grid">
+    <label>Makeup Date
+      <input type="date" id="k_date" required>
+    </label>
+
+    <label>Makeup Time
+      <input type="text" class="smart-filter" data-target="k_time" placeholder="Search time…">
+      <select id="k_time" size="6" required></select>
+    </label>
+  </div>
+
+  <div class="grid">
+    <label>Makeup Room
+      <input type="text" class="smart-filter" data-target="k_room" placeholder="Search room…">
+      <select id="k_room" size="6" required></select>
+    </label>
+
+    <label>Status
+      <select id="k_status">
+        <option>Pending</option>
+        <option>Completed</option>
       </select>
     </label>
+  </div>
 
-    <button type="submit" class="submit">Submit Missed Class</button>
-  </form>
+  <input type="text" id="k_remarks"
+         placeholder="If completed, provide attendance / recording link">
 
-  <!-- ================= MAKEUP CLASS ================= -->
-  <form id="makeupForm" class="form hidden" autocomplete="off">
-    <h2>Makeup Class Entry</h2>
-
-    <div class="grid">
-      <label>Schedule Date
-        <input type="date" id="k_schedule" required>
-      </label>
-
-      <label>Department
-        <input type="text" id="k_dept_filter" class="filter">
-        <select id="k_dept" required></select>
-      </label>
-    </div>
-
-    <div class="grid">
-      <label>Course Code
-        <input type="text" id="k_course_filter" class="filter">
-        <select id="k_course" size="6" required></select>
-      </label>
-
-      <label>Teacher Initial
-        <input type="text" id="k_teacher_filter" class="filter">
-        <select id="k_teacher" size="6" required></select>
-      </label>
-    </div>
-
-    <div class="grid">
-      <label>Makeup Date
-        <input type="date" id="k_date" required>
-      </label>
-
-      <label>Makeup Time
-        <input type="text" id="k_time_filter" class="filter">
-        <select id="k_time" size="6" required></select>
-      </label>
-    </div>
-
-    <div class="grid">
-      <label>Makeup Room
-        <input type="text" id="k_room_filter" class="filter">
-        <select id="k_room" size="6" required></select>
-      </label>
-
-      <label>Status
-        <select id="k_status">
-          <option>Pending</option>
-          <option>Completed</option>
-        </select>
-      </label>
-    </div>
-
-    <label>Remarks
-      <input type="text" id="k_remarks">
-    </label>
-
-    <button type="submit" class="submit">Save Makeup Class</button>
-  </form>
+  <button type="submit" class="submit">Save Makeup Class</button>
+</form>
 
   <!-- ================= PENDING ================= -->
-  <div id="pendingSection" class="form hidden">
+  <section id="pendingSection" class="form hidden">
     <h2>Pending Makeup Classes</h2>
 
-    <input id="pendingTeacherSearch" class="filter" placeholder="Search by Teacher Initial...">
+    <input
+      id="pendingTeacherSearch"
+      class="filter"
+      placeholder="Search by Teacher Initial…">
 
     <div class="table-wrap">
       <table id="pendingTable">
@@ -199,17 +205,62 @@
         <tbody></tbody>
       </table>
     </div>
-  </div>
+  </section>
 
 </main>
 
+<!-- ================= FOOTER ================= -->
 <footer>
-  <small>Built for Daffodil International University – Md. Sarower Mal, CSE</small>
+  <small>
+    Built for Daffodil International University — Md. Sarower Mal, CSE
+  </small>
 </footer>
 
-<script src="script.js"></script>
+<!-- ================= SCRIPTS ================= -->
+<script src="script.js" defer></script>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+/* =========================================================
+   SMART SEARCH DROPDOWN (UNIVERSAL)
+========================================================= */
+document.addEventListener("input", e => {
+  if (!e.target.classList.contains("smart-filter")) return;
+
+  const query = e.target.value.toLowerCase();
+  const selectId = e.target.dataset.target;
+  const select = document.getElementById(selectId);
+
+  [...select.options].forEach(opt => {
+    opt.hidden = !opt.text.toLowerCase().includes(query);
+  });
+
+  select.hidden = false;
+});
+
+/* Auto-fill input when option selected */
+document.addEventListener("change", e => {
+  if (e.target.tagName !== "SELECT") return;
+
+  const filter = document.querySelector(
+    `.smart-filter[data-target="${e.target.id}"]`
+  );
+
+  if (filter) {
+    filter.value = e.target.value;
+    e.target.hidden = true;
+  }
+});
+
+/* Hide dropdown when clicking outside */
+document.addEventListener("click", e => {
+  if (!e.target.classList.contains("smart-filter")) {
+    document.querySelectorAll("select").forEach(s => {
+      if (s.size > 1) s.hidden = true;
+    });
+  }
+});
+
   const missedForm = document.getElementById("missedForm");
   const makeupForm = document.getElementById("makeupForm");
   const pendingSection = document.getElementById("pendingSection");
@@ -230,8 +281,8 @@
     pendingSection.classList.remove("hidden");
     missedForm.classList.add("hidden");
     makeupForm.classList.add("hidden");
-    loadPendingMakeup();
   };
+});
 </script>
 
 <script>
