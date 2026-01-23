@@ -1,6 +1,7 @@
 /* ================= ROOT ================= */
 :root{
   --accent:#317efb;
+  --success:#1b9a59;
   --bg:#f4f6f9;
   --card:#ffffff;
   --radius:12px;
@@ -8,6 +9,7 @@
 
 /* ================= RESET ================= */
 *{ box-sizing:border-box; }
+
 html, body{
   margin:0;
   padding:0;
@@ -16,13 +18,13 @@ html, body{
   font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   background:var(--bg);
 }
+
 .hidden{ display:none !important; }
 
 /* ================= HEADER ================= */
 .app-header{
   position:fixed;
   top:0;
-  left:0;
   width:100%;
   z-index:1200;
   background:linear-gradient(90deg,#317efb,#1b9a59);
@@ -30,77 +32,65 @@ html, body{
   align-items:center;
   justify-content:center;
   gap:14px;
-  padding:14px 18px;
+  padding:14px 16px;
   color:#fff;
+}
+
+.app-logo{
+  width:72px;
+  height:72px;
+  object-fit:contain;
 }
 
 .header-left h1{
   margin:0;
-  font-size:26px;
+  font-size:22px;
   font-weight:800;
 }
 
 .header-left .subtitle{
-  margin:2px 0 0;
-  font-size:14px;
+  margin-top:2px;
+  font-size:13px;
   font-weight:600;
   color:#e0f7fa;
 }
 
-/* ================= LOGO ================= */
-.logo-wrap{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.app-logo{
-  width:90px;          /* ✅ BIG DIU LOGO */
-  height:90px;
-  object-fit:contain;
-  pointer-events:none;
-}
-
 /* ================= DASHBOARD ================= */
 .dashboard{
-  margin-top:130px; /* prevents hiding under fixed header */
+  margin-top:120px;
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+  grid-template-columns:repeat(4,1fr);
   gap:12px;
   padding:16px;
   max-width:860px;
-  margin-left:auto;
-  margin-right:auto;
+  margin-inline:auto;
 }
 
 .dashboard .card{
-  background:#ffffff;
+  background:var(--card);
   border-radius:12px;
-  padding:10px 6px;
+  padding:10px;
   text-align:center;
   box-shadow:0 4px 12px rgba(0,0,0,.08);
   font-size:12px;
-  font-weight:500;
-  letter-spacing:.3px;
+  font-weight:600;
 }
 
 .dashboard .card span{
   display:block;
-  margin-top:4px;
   font-size:20px;
-  font-weight:600;
+  margin-top:4px;
 }
 
-/* Dashboard colors */
-.card.total-missed span{ color:#2563eb; }
-.card.completed span{ color:#16a34a; }
-.card.pending span{ color:#f97316; }
-.card.extra span{ color:#7c3aed; }
+.total-missed span{ color:#2563eb; }
+.completed span{ color:#16a34a; }
+.pending span{ color:#f97316; }
+.extra span{ color:#7c3aed; }
 
 /* ================= CONTAINER ================= */
 .container{
   max-width:860px;
-  margin:18px auto;
+  margin:16px auto;
   background:var(--card);
   padding:18px;
   border-radius:var(--radius);
@@ -112,20 +102,20 @@ html, body{
   gap:12px;
   justify-content:center;
   flex-wrap:wrap;
-  margin-bottom:16px;
+  margin-bottom:14px;
 }
 
 button{
   background:var(--accent);
   color:#fff;
   border:none;
-  padding:12px 16px;
+  padding:12px;
   border-radius:10px;
   cursor:pointer;
   min-height:46px;
-  flex:1;
   font-weight:600;
 }
+
 button:active{ transform:scale(.97); }
 
 /* ================= FORMS ================= */
@@ -140,32 +130,73 @@ button:active{ transform:scale(.97); }
 label{
   flex:1 1 240px;
   font-size:13px;
+  position:relative;
 }
 
+/* Native input */
 input, select{
   width:100%;
-  padding:11px;
+  padding:12px;
   margin-top:6px;
-  border-radius:8px;
+  border-radius:10px;
   border:1px solid #d1d5db;
-  font-size:14px;
+  font-size:16px; /* 👈 CRITICAL for mobile */
+}
+
+/* ================= MOBILE SMART DROPDOWN ================= */
+.smart-input{
+  cursor:pointer;
+}
+
+.dropdown{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:#fff;
+  border-radius:12px;
+  max-height:240px;
+  overflow-y:auto;
+  z-index:3000;
+  box-shadow:0 12px 28px rgba(0,0,0,.18);
+}
+
+.dropdown div{
+  padding:14px 16px;
+  font-size:16px;
+  border-bottom:1px solid #f1f1f1;
+  cursor:pointer;
+}
+
+.dropdown div:last-child{
+  border-bottom:none;
+}
+
+.dropdown div:hover{
+  background:#eef2ff;
 }
 
 /* ================= SUBMIT ================= */
 .submit{
-  background:#1b9a59;
+  background:var(--success);
   margin-top:12px;
   font-weight:700;
 }
 
 /* ================= TABLE ================= */
 .table-wrap{ overflow-x:auto; margin-top:12px; }
-table{ width:100%; border-collapse:collapse; }
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
 th, td{
   border:1px solid #e5e7eb;
   padding:8px;
   font-size:13px;
 }
+
 th{
   background:#f3f4f6;
   font-weight:600;
@@ -175,11 +206,12 @@ th{
 footer{
   margin:20px auto;
   text-align:center;
-  padding:14px 10px;
+  padding:14px;
   max-width:860px;
   border-radius:12px;
   background:linear-gradient(90deg,#317efb,#1b9a59,#ff9800);
 }
+
 footer small{
   color:#fff;
   font-size:13px;
@@ -188,47 +220,6 @@ footer small{
 
 /* ================= MOBILE ================= */
 @media (max-width:600px){
-  .app-logo{ width:64px; height:64px; }
-  .header-left h1{ font-size:22px; }
-  .header-left .subtitle{ font-size:13px; }
   .dashboard{ grid-template-columns:repeat(2,1fr); }
-}
-
-/* ================= MATERIAL MOBILE DROPDOWN ================= */
-@media (max-width: 600px) {
-
-  .smart-filter{
-    font-size:16px;
-    padding:12px;
-    border-radius:10px;
-    border:1px solid #cbd5e1;
-  }
-
-  .smart-filter + select{
-    display:none;
-    position:absolute;
-    top:100%;
-    left:0;
-    right:0;
-    background:#ffffff;
-    border-radius:12px;
-    max-height:240px;
-    overflow-y:auto;
-    z-index:2000;
-    box-shadow:0 12px 28px rgba(0,0,0,.18);
-  }
-
-  .smart-filter.show + select{
-    display:block;
-  }
-
-  .smart-filter + select option{
-    padding:14px 16px;
-    font-size:16px;
-  }
-
-  .smart-filter + select option.highlight{
-    background:#e0f2fe;
-    font-weight:600;
-  }
+  button{ width:100%; font-size:16px; }
 }
