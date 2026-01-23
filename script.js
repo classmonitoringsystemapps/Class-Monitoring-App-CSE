@@ -1,3 +1,4 @@
+
 /* =========================================================
    CONFIG
 ========================================================= */
@@ -93,16 +94,13 @@ const TIMES = [
 function formatBDDateTimeFromInput(value) {
   if (!value) return "";
 
-  // Current time in Bangladesh
   const nowBD = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
   );
 
-  // Date from input (YYYY-MM-DD)
   const d = new Date(value);
   if (isNaN(d)) return "";
 
-  // Merge selected date + current BD time
   const finalDate = new Date(
     d.getFullYear(),
     d.getMonth(),
@@ -112,37 +110,32 @@ function formatBDDateTimeFromInput(value) {
     0
   );
 
-  // Format output
-  return finalDate
-    .toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-      timeZone: "Asia/Dhaka"
-    })
-    .replace(",", "")              // remove extra comma
-    .replace(" am", " am")
-    .replace(" pm", " pm");
+  return finalDate.toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Dhaka"
+  }).replace(",", "");
 }
 
 /* =========================================================
-   DASHBOARD
+   DASHBOARD ANIMATION
 ========================================================= */
-function animateCount(el, to) {
+function animateCount(el, target) {
   if (!el) return;
-  let val = 0;
-  const step = Math.max(Math.ceil(to / 30), 1);
+  let value = 0;
+  const step = Math.max(Math.ceil(target / 40), 1);
 
   const timer = setInterval(() => {
-    val += step;
-    if (val >= to) {
-      el.textContent = to;
+    value += step;
+    if (value >= target) {
+      el.textContent = target;
       clearInterval(timer);
     } else {
-      el.textContent = val;
+      el.textContent = value;
     }
   }, 20);
 }
@@ -152,11 +145,10 @@ function loadDashboard() {
     .then(r => r.json())
     .then(d => {
       if (d.status !== "success") return;
-
-      animateCount(totalMissed, d.totalMissed || 0);
-      animateCount(completed, d.completed || 0);
-      animateCount(pending, d.pending || 0);
-      animateCount(extraCount, d.extra || 0);
+      animateCount(document.getElementById("totalMissed"), d.totalMissed || 0);
+      animateCount(document.getElementById("completed"), d.completed || 0);
+      animateCount(document.getElementById("pending"), d.pending || 0);
+      animateCount(document.getElementById("extraCount"), d.extra || 0);
     })
     .catch(console.error);
 }
@@ -167,7 +159,6 @@ function loadDashboard() {
 function populateSelect(id, list) {
   const sel = document.getElementById(id);
   if (!sel) return;
-
   sel.innerHTML = "";
   list.forEach(v => {
     const o = document.createElement("option");
@@ -185,85 +176,80 @@ async function postForm(payload) {
   return res.json();
 }
 
-function enableSearchableSelect(filterId, selectId) {
+/* =========================================================
+   MATERIAL MOBILE DROPDOWN (AUTO-HIGHLIGHT)
+========================================================= */
+function bindMaterialDropdown(filterId, selectId) {
   const filter = document.getElementById(filterId);
   const select = document.getElementById(selectId);
   if (!filter || !select) return;
 
-  const original = Array.from(select.options).map(o => ({
-    value: o.value,
-    text: o.textContent
-  }));
+  let firstMatch = null;
+
+  function open(){
+    filter.classList.add("show");
+    select.classList.add("show");
+  }
+
+  function close(){
+    filter.classList.remove("show");
+    select.classList.remove("show");
+  }
+
+  filter.addEventListener("focus", open);
+  filter.addEventListener("click", open);
 
   filter.addEventListener("input", () => {
     const q = filter.value.toLowerCase().trim();
-    select.innerHTML = "";
-    original.forEach(o => {
-      if (!q || o.text.toLowerCase().includes(q)) {
-        const opt = document.createElement("option");
-        opt.value = o.value;
-        opt.textContent = o.text;
-        select.appendChild(opt);
+    firstMatch = null;
+
+    [...select.options].forEach(opt => {
+      opt.classList.remove("highlight");
+
+      const match = !q || opt.text.toLowerCase().includes(q);
+      opt.style.display = match ? "" : "none";
+
+      if (match && !firstMatch) {
+        firstMatch = opt;
       }
     });
+
+    if (firstMatch) firstMatch.classList.add("highlight");
+    open();
   });
 
-  select.addEventListener("change", () => {
-    filter.value = select.value;
+  select.addEventListener("click", e => {
+    if (e.target.tagName !== "OPTION") return;
+    filter.value = e.target.value;
+    select.value = e.target.value;
+    close();
+  });
+
+  document.addEventListener("click", e => {
+    if (!filter.contains(e.target) && !select.contains(e.target)) {
+      close();
+    }
   });
 }
 
-/* =========================================================
-   SMART SEARCH DROPDOWN (MOBILE FRIENDLY)
-========================================================= */
-document.addEventListener("input", e => {
-  const input = e.target;
-  if (!input.classList.contains("smart-filter")) return;
-
-  const select = document.getElementById(input.dataset.target);
-  const q = input.value.toLowerCase();
-
-  input.classList.add("show");
-
-  Array.from(select.options).forEach(opt => {
-    opt.style.display = opt.text.toLowerCase().includes(q) ? "" : "none";
-  });
-});
-
-/* Use pointerdown instead of click (mobile safe) */
-document.addEventListener("pointerdown", e => {
-  if (e.target.tagName === "OPTION") {
-    const select = e.target.parentElement;
-    const input = document.querySelector(
-      `.smart-filter[data-target="${select.id}"]`
-    );
-
-    if (input) {
-      input.value = e.target.value;
-      input.classList.remove("show");
-    }
-  }
-});
-
-/* Close dropdown when focus leaves */
-document.addEventListener("focusin", e => {
-  if (!e.target.classList.contains("smart-filter")) {
-    document.querySelectorAll(".smart-filter").forEach(i =>
-      i.classList.remove("show")
-    );
-  }
-});
 
 /* =========================================================
-   MISSED CLASS (WITH WATERMARK)
+   MISSED CLASS FORM VALIDATION
 ========================================================= */
 missedForm.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const watermark = `CMS | Missed | ${new Date().toLocaleString("en-GB", {
-    timeZone: "Asia/Dhaka"
-  })}`;
+  // Required fields
+  const required = [m_date, m_dept, m_course, m_room, m_time, m_teacher, m_reason];
+  for (const field of required) {
+    if (!field.value || field.value.trim() === "") {
+      alert(`⚠️ Please fill all required fields`);
+      field.focus();
+      return;
+    }
+  }
 
+  const watermark = `CMS | Missed | ${new Date().toLocaleString("en-GB", { timeZone: "Asia/Dhaka" })}`;
   const payload = {
     action: "save_missed",
     date: formatBDDateTimeFromInput(m_date.value),
@@ -277,7 +263,6 @@ missedForm.addEventListener("submit", async e => {
   };
 
   const res = await postForm(payload);
-
   if (res.status === "success") {
     alert("✅ Missed class saved");
     e.target.reset();
@@ -288,15 +273,22 @@ missedForm.addEventListener("submit", async e => {
 });
 
 /* =========================================================
-   MAKEUP CLASS (WITH WATERMARK)
+   MAKEUP CLASS FORM VALIDATION
 ========================================================= */
 makeupForm.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const watermark = `CMS | Makeup | ${new Date().toLocaleString("en-GB", {
-    timeZone: "Asia/Dhaka"
-  })}`;
+  // Required fields
+  const required = [k_schedule, k_dept, k_course, k_teacher, k_date, k_time, k_room, k_status];
+  for (const field of required) {
+    if (!field.value || field.value.trim() === "") {
+      alert(`⚠️ Please fill all required fields`);
+      field.focus();
+      return;
+    }
+  }
 
+  const watermark = `CMS | Makeup | ${new Date().toLocaleString("en-GB", { timeZone: "Asia/Dhaka" })}`;
   const payload = {
     action: "save_makeup",
     scheduleDate: formatBDDateTimeFromInput(k_schedule.value),
@@ -311,15 +303,7 @@ makeupForm.addEventListener("submit", async e => {
     watermark
   };
 
-  for (const k in payload) {
-    if (!payload[k] && k !== "remarks") {
-      alert("⚠️ Please fill all required fields");
-      return;
-    }
-  }
-
   const res = await postForm(payload);
-
   if (res.status === "success") {
     alert("✅ Makeup class saved");
     e.target.reset();
@@ -336,26 +320,20 @@ makeupForm.addEventListener("submit", async e => {
 function updateMakeup(row) {
   const statusEl = document.getElementById(`status_${row}`);
   const remarksEl = document.getElementById(`remarks_${row}`);
-
   if (!statusEl) return;
 
   const status = statusEl.value;
   const remarks = remarksEl ? remarksEl.value.trim() : "";
 
-  fetch(
-    `${API_URL}?action=update_makeup&row=${row}&status=${status}&remarks=${encodeURIComponent(remarks)}`
-  )
+  fetch(`${API_URL}?action=update_makeup&row=${row}&status=${status}&remarks=${encodeURIComponent(remarks)}`)
     .then(r => r.json())
     .then(res => {
       if (res.status === "success") {
         alert("✅ Updated");
         loadPendingMakeup();
         loadDashboard();
-      } else {
-        alert(res.message || "❌ Update failed");
-      }
-    })
-    .catch(console.error);
+      } else alert(res.message || "❌ Update failed");
+    }).catch(console.error);
 }
 
 function loadPendingMakeup() {
@@ -364,44 +342,35 @@ function loadPendingMakeup() {
     .then(res => {
       const tbody = document.querySelector("#pendingTable tbody");
       if (!tbody) return;
-
       tbody.innerHTML = "";
 
       if (!res.data || !res.data.length) {
-        tbody.innerHTML =
-          `<tr><td colspan="9">No pending makeup classes</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9">No pending makeup classes</td></tr>`;
         return;
       }
 
       res.data.forEach(r => {
-        tbody.insertAdjacentHTML(
-          "beforeend",
-          `
-<tr>
-  <td>${r.scheduleDate}</td>
-  <td>${r.department}</td>
-  <td>${r.course}</td>
-  <td>${r.teacher}</td>
-  <td>${r.makeupDate}</td>
-  <td>${r.makeupTime}</td>
-  <td>${r.makeupRoom}</td>
-  <td>
-    <select id="status_${r.row}">
-      <option value="" disabled selected hidden>${r.status}</option>
-      <option value="Pending">Pending</option>
-      <option value="Completed">Completed</option>
-    </select>
-  </td>
-  <td>
-    <input
-      id="remarks_${r.row}"
-      value="${r.remarks || ""}"
-      placeholder="Attendance link provide"
-    >
-    <button onclick="updateMakeup(${r.row})">Update</button>
-  </td>
-</tr>
-          `
+        tbody.insertAdjacentHTML("beforeend",
+          `<tr>
+            <td>${r.scheduleDate}</td>
+            <td>${r.department}</td>
+            <td>${r.course}</td>
+            <td>${r.teacher}</td>
+            <td>${r.makeupDate}</td>
+            <td>${r.makeupTime}</td>
+            <td>${r.makeupRoom}</td>
+            <td>
+              <select id="status_${r.row}">
+                <option value="" disabled selected hidden>${r.status}</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </td>
+            <td>
+              <input id="remarks_${r.row}" value="${r.remarks || ""}" placeholder="Attendance link provide">
+              <button onclick="updateMakeup(${r.row})">Update</button>
+            </td>
+          </tr>`
         );
       });
     })
@@ -409,78 +378,64 @@ function loadPendingMakeup() {
 }
 
 /* =========================================================
-   INITIAL LOAD
+   INITIAL LOAD (CLEAN & FINAL)
 ========================================================= */
 window.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- POPULATE SELECT OPTIONS ---------- */
   populateSelect("m_teacher", TEACHERS);
   populateSelect("k_teacher", TEACHERS);
+
   populateSelect("m_dept", DEPARTMENTS);
   populateSelect("k_dept", DEPARTMENTS);
+
   populateSelect("m_course", COURSES);
   populateSelect("k_course", COURSES);
+
   populateSelect("m_room", ROOMS);
   populateSelect("k_room", ROOMS);
+
   populateSelect("m_time", TIMES);
   populateSelect("k_time", TIMES);
 
-  bindSmartDropdown("m_dept_filter", "m_dept");
-  bindSmartDropdown("m_course_filter", "m_course");
-  bindSmartDropdown("m_room_filter", "m_room");
-  bindSmartDropdown("m_time_filter", "m_time");
-  bindSmartDropdown("m_teacher_filter", "m_teacher");
-
-  bindSmartDropdown("k_dept_filter", "k_dept");
-  bindSmartDropdown("k_course_filter", "k_course");
-  bindSmartDropdown("k_room_filter", "k_room");
-  bindSmartDropdown("k_time_filter", "k_time");
-  bindSmartDropdown("k_teacher_filter", "k_teacher");
-
-  loadDashboard();
-  loadPendingMakeup();
-}); 
-
 /* =========================================================
-   MOBILE SMART DROPDOWN (FIXED)
+   MATERIAL MOBILE DROPDOWN (SAFE)
 ========================================================= */
-
-function bindSmartDropdown(filterId, selectId) {
+function bindMaterialDropdown(filterId, selectId) {
   const filter = document.getElementById(filterId);
   const select = document.getElementById(selectId);
-
   if (!filter || !select) return;
 
-  // Show dropdown on focus
-  filter.addEventListener("focus", () => {
-    select.style.display = "block";
-  });
-
-  // Filter options
   filter.addEventListener("input", () => {
-    const q = filter.value.toLowerCase();
+    const q = filter.value.toLowerCase().trim();
+    if (!q) return;
 
-    let found = false;
-    [...select.options].forEach(opt => {
-      const match = opt.text.toLowerCase().includes(q);
-      opt.style.display = match ? "" : "none";
-      if (match) found = true;
-    });
+    let matched = false;
 
-    select.style.display = found ? "block" : "none";
+    for (const opt of select.options) {
+      if (opt.value.toLowerCase().includes(q)) {
+        select.value = opt.value;   // ✅ auto-select
+        matched = true;
+        break;
+      }
+    }
+
+    // Optional visual hint
+    filter.style.borderColor = matched ? "#16a34a" : "#ef4444";
   });
 
-  // Select option
+  // Keep filter text synced when user taps select manually
   select.addEventListener("change", () => {
     filter.value = select.value;
-    select.style.display = "none";
-  });
-
-  // Close when clicking outside
-  document.addEventListener("click", e => {
-    if (!filter.contains(e.target) && !select.contains(e.target)) {
-      select.style.display = "none";
-    }
+    filter.style.borderColor = "#d1d5db";
   });
 }
+
+  /* ---------- DASHBOARD & PENDING ---------- */
+  loadDashboard();
+  loadPendingMakeup();
+
+});
 
 /* =========================================================
    SERVICE WORKER
@@ -488,3 +443,27 @@ function bindSmartDropdown(filterId, selectId) {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
 }
+
+/* =========================================================
+   MOBILE SMART DROPDOWN ENABLE
+========================================================= */
+document.addEventListener("click", e => {
+  if (!e.target.classList.contains("filter")) {
+    document.querySelectorAll(".filter").forEach(f =>
+      f.classList.remove("show")
+    );
+  }
+});
+
+document.querySelectorAll(".filter").forEach(input => {
+  input.addEventListener("focus", () => {
+    document.querySelectorAll(".filter").forEach(f =>
+      f.classList.remove("show")
+    );
+    input.classList.add("show");
+  });
+
+  input.addEventListener("input", () => {
+    input.classList.add("show");
+  });
+});
