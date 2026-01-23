@@ -15,37 +15,37 @@
 
 <body>
 
-<!-- ================= HEADER + DASHBOARD ================= -->
-<header class="app-header">
-  <div class="logo-wrap">
-    <img src="icon-512.svg" alt="DIU Logo" class="app-logo" loading="lazy">
+<!-- ================= DASHBOARD ================= -->
+<section class="dashboard">
+  <div class="card total-missed">
+    <span>Total Missed</span>
+    <strong id="totalMissed">0</strong>
   </div>
-  <div class="header-left">
-    <h1>Class Monitoring</h1>
-    <p class="subtitle">Missed &amp; Makeup Class Entry — CSE, DIU</p>
-  </div>
-</header>
 
-<section class="dashboard-wrapper" aria-label="Class summary dashboard">
-  <div class="dashboard">
-    <div class="card total-missed">
-      <span class="card-label">Total Missed</span>
-      <strong id="totalMissed">0</strong>
-    </div>
-    <div class="card completed">
-      <span class="card-label">Makeup Completed</span>
-      <strong id="completed">0</strong>
-    </div>
-    <div class="card pending">
-      <span class="card-label">Makeup Pending</span>
-      <strong id="pending">0</strong>
-    </div>
-    <div class="card extra">
-      <span class="card-label">Extra Classes</span>
-      <strong id="extraCount">0</strong>
-    </div>
+  <div class="card">
+    <span>Makeup Completed</span>
+    <strong id="completed">0</strong>
+  </div>
+
+  <div class="card">
+    <span>Makeup Pending</span>
+    <strong id="pending">0</strong>
+  </div>
+
+  <div class="card">
+    <span>Extra Classes</span>
+    <strong id="extraCount">0</strong>
   </div>
 </section>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="logo-wrap">
+    <img src="icon-512.svg" alt="App Logo" class="app-logo">
+  </div>
+  <h1>Class Monitoring App</h1>
+  <p class="subtitle">Missed &amp; Makeup Class Entry — CSE-DIU</p>
+</header>
 
 <!-- ================= MAIN ================= -->
 <main class="container">
@@ -57,140 +57,163 @@
     <button type="button" id="btn_pending">Pending Makeup</button>
   </div>
 
-    <!-- ================= MISSED CLASS ================= -->
-    <form id="missedForm" class="form hidden watermark" autocomplete="off" novalidate>
-      <h2>Missed Class Entry</h2>
+  <!-- ================= CLASS ENTRY (COMBINED SLOT) ================= -->
+<section class="class-entry watermark">
 
-      <div class="grid">
-        <label>Date
-          <input type="date" id="m_date" required>
-        </label>
-        <label>Department
-          <input type="text" class="smart-filter" data-target="m_dept" placeholder="Search department…">
-          <select id="m_dept" size="6" required></select>
-        </label>
-      </div>
+  <!-- Watermark -->
+  <span class="form-watermark">Class Monitoring System</span>
 
-      <div class="grid">
-        <label>Course Code
-          <input type="text" class="smart-filter" data-target="m_course" placeholder="Search course…">
-          <select id="m_course" size="6" required></select>
-        </label>
-        <label>Room
-          <input type="text" class="smart-filter" data-target="m_room" placeholder="Search room…">
-          <select id="m_room" size="6"></select>
-        </label>
-      </div>
+  <!-- ================= MISSED CLASS ================= -->
+<form id="missedForm" class="form hidden watermark" autocomplete="off" novalidate>
+  <h2>Missed Class Entry</h2>
+  <span class="form-watermark">Class Monitoring System</span>
 
-      <div class="grid">
-        <label>Time Slot
-          <input type="text" class="smart-filter" data-target="m_time" placeholder="Search time…">
-          <select id="m_time" size="6"></select>
-        </label>
-        <label>Teacher Initial
-          <input type="text" class="smart-filter" data-target="m_teacher" placeholder="Search teacher…">
-          <select id="m_teacher" size="6" required></select>
-        </label>
-      </div>
+  <div class="grid">
+    <label>Date
+      <input type="date" id="m_date" required>
+    </label>
 
-      <label>Reason
-        <select id="m_reason" required>
-          <option value="">Select reason</option>
-          <option>Leave</option>
-          <option>Sick</option>
-          <option>Student Absent</option>
-          <option>Absent</option>
-          <option>Meeting</option>
-          <option>Both are Absent</option>
-          <option>Due to an Emergency</option>
-        </select>
-      </label>
+    <label>Department
+      <input type="text" class="smart-filter" data-target="m_dept" placeholder="Search department…">
+      <select id="m_dept" size="6" required></select>
+    </label>
+  </div>
 
-      <button type="submit" class="submit">Submit Missed Class</button>
-    </form>
+  <div class="grid">
+    <label>Course Code
+      <input type="text" class="smart-filter" data-target="m_course" placeholder="Search course…">
+      <select id="m_course" size="6" required></select>
+    </label>
 
-    <!-- ================= MAKEUP CLASS ================= -->
-    <form id="makeupForm" class="form hidden watermark" autocomplete="off" novalidate>
-      <h2>Makeup Class Entry</h2>
+    <label>Room
+      <input type="text" class="smart-filter" data-target="m_room" placeholder="Search room…">
+      <select id="m_room" size="6"></select>
+    </label>
+  </div>
 
-      <div class="grid">
-        <label>Schedule Date
-          <input type="date" id="k_schedule" required>
-        </label>
-        <label>Department
-          <input type="text" class="smart-filter" data-target="k_dept" placeholder="Search department…">
-          <select id="k_dept" size="6" required></select>
-        </label>
-      </div>
+  <div class="grid">
+    <label>Time Slot
+      <input type="text" class="smart-filter" data-target="m_time" placeholder="Search time…">
+      <select id="m_time" size="6"></select>
+    </label>
 
-      <div class="grid">
-        <label>Course Code
-          <input type="text" class="smart-filter" data-target="k_course" placeholder="Search course…">
-          <select id="k_course" size="6" required></select>
-        </label>
-        <label>Teacher Initial
-          <input type="text" class="smart-filter" data-target="k_teacher" placeholder="Search teacher…">
-          <select id="k_teacher" size="6" required></select>
-        </label>
-      </div>
+    <label>Teacher Initial
+      <input type="text" class="smart-filter" data-target="m_teacher" placeholder="Search teacher…">
+      <select id="m_teacher" size="6" required></select>
+    </label>
+  </div>
 
-      <div class="grid">
-        <label>Makeup Date
-          <input type="date" id="k_date" required>
-        </label>
-        <label>Makeup Time
-          <input type="text" class="smart-filter" data-target="k_time" placeholder="Search time…">
-          <select id="k_time" size="6" required></select>
-        </label>
-      </div>
+  <label>Reason
+    <select id="m_reason" required>
+      <option value="">Select reason</option>
+      <option>Leave</option>
+      <option>Sick</option>
+      <option>Student Absent</option>
+      <option>Absent</option>
+      <option>Meeting</option>
+      <option>Both are Absent</option>
+      <option>Due to an Emergency</option>
+    </select>
+  </label>
 
-      <div class="grid">
-        <label>Makeup Room
-          <input type="text" class="smart-filter" data-target="k_room" placeholder="Search room…">
-          <select id="k_room" size="6" required></select>
-        </label>
-        <label>Status
-          <select id="k_status">
-            <option>Pending</option>
-            <option>Completed</option>
-          </select>
-        </label>
-      </div>
+  <button type="submit" class="submit">Submit Missed Class</button>
+</form>
 
-      <input type="text" id="k_remarks" placeholder="If completed, provide attendance / recording link">
-      <button type="submit" class="submit">Save Makeup Class</button>
-    </form>
+<!-- ================= MAKEUP CLASS ================= -->
+<form id="makeupForm" class="form hidden watermark" autocomplete="off" novalidate>
+  <h2>Makeup Class Entry</h2>
+  <span class="form-watermark">Class Monitoring System</span>
 
-    <!-- ================= PENDING ================= -->
-    <section id="pendingSection" class="form hidden">
-      <h2>Pending Makeup Classes</h2>
-      <input id="pendingTeacherSearch" class="filter" placeholder="Search by Teacher Initial…">
-      <div class="table-wrap">
-        <table id="pendingTable">
-          <thead>
-            <tr>
-              <th>Schedule</th>
-              <th>Dept</th>
-              <th>Course</th>
-              <th>Teacher</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Room</th>
-              <th>Status</th>
-              <th>Remarks</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
+  <div class="grid">
+    <label>Schedule Date
+      <input type="date" id="k_schedule" required>
+    </label>
 
+    <label>Department
+      <input type="text" class="smart-filter" data-target="k_dept" placeholder="Search department…">
+      <select id="k_dept" required></select>
+    </label>
+  </div>
+
+  <div class="grid">
+    <label>Course Code
+      <input type="text" class="smart-filter" data-target="k_course" placeholder="Search course…">
+      <select id="k_course" size="6" required></select>
+    </label>
+
+    <label>Teacher Initial
+      <input type="text" class="smart-filter" data-target="k_teacher" placeholder="Search teacher…">
+      <select id="k_teacher" size="6" required></select>
+    </label>
+  </div>
+
+  <div class="grid">
+    <label>Makeup Date
+      <input type="date" id="k_date" required>
+    </label>
+
+    <label>Makeup Time
+      <input type="text" class="smart-filter" data-target="k_time" placeholder="Search time…">
+      <select id="k_time" size="6" required></select>
+    </label>
+  </div>
+
+  <div class="grid">
+    <label>Makeup Room
+      <input type="text" class="smart-filter" data-target="k_room" placeholder="Search room…">
+      <select id="k_room" size="6" required></select>
+    </label>
+
+    <label>Status
+      <select id="k_status">
+        <option>Pending</option>
+        <option>Completed</option>
+      </select>
+    </label>
+  </div>
+
+  <input type="text" id="k_remarks"
+         placeholder="If completed, provide attendance / recording link">
+
+  <button type="submit" class="submit">Save Makeup Class</button>
+</form>
+
+  <!-- ================= PENDING ================= -->
+  <section id="pendingSection" class="form hidden">
+    <h2>Pending Makeup Classes</h2>
+
+    <input
+      id="pendingTeacherSearch"
+      class="filter"
+      placeholder="Search by Teacher Initial…">
+
+    <div class="table-wrap">
+      <table id="pendingTable">
+        <thead>
+          <tr>
+            <th>Schedule</th>
+            <th>Dept</th>
+            <th>Course</th>
+            <th>Teacher</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Room</th>
+            <th>Status</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </section>
+
 </main>
 
 <!-- ================= FOOTER ================= -->
 <footer>
-  <small>Built for Daffodil International University — Md. Sarower Mal, CSE</small>
+  <small>
+    Built for Daffodil International University — Md. Sarower Mal, CSE
+  </small>
 </footer>
 
 <!-- ================= SCRIPTS ================= -->
@@ -198,29 +221,46 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+/* =========================================================
+   SMART SEARCH DROPDOWN (UNIVERSAL)
+========================================================= */
+document.addEventListener("input", e => {
+  if (!e.target.classList.contains("smart-filter")) return;
 
-  /* ===== SMART SEARCH DROPDOWN (UNIVERSAL) ===== */
-  document.addEventListener("input", e => {
-    if (!e.target.classList.contains("smart-filter")) return;
-    const query = e.target.value.toLowerCase();
-    const select = document.getElementById(e.target.dataset.target);
-    [...select.options].forEach(opt => opt.hidden = !opt.text.toLowerCase().includes(query));
-    select.hidden = false;
+  const query = e.target.value.toLowerCase();
+  const selectId = e.target.dataset.target;
+  const select = document.getElementById(selectId);
+
+  [...select.options].forEach(opt => {
+    opt.hidden = !opt.text.toLowerCase().includes(query);
   });
 
-  document.addEventListener("change", e => {
-    if (e.target.tagName !== "SELECT") return;
-    const filter = document.querySelector(`.smart-filter[data-target="${e.target.id}"]`);
-    if (filter) { filter.value = e.target.value; e.target.hidden = true; }
-  });
+  select.hidden = false;
+});
 
-  document.addEventListener("click", e => {
-    if (!e.target.classList.contains("smart-filter")) {
-      document.querySelectorAll("select").forEach(s => { if (s.size > 1) s.hidden = true; });
-    }
-  });
+/* Auto-fill input when option selected */
+document.addEventListener("change", e => {
+  if (e.target.tagName !== "SELECT") return;
 
-  /* ===== SHOW/HIDE FORMS ===== */
+  const filter = document.querySelector(
+    `.smart-filter[data-target="${e.target.id}"]`
+  );
+
+  if (filter) {
+    filter.value = e.target.value;
+    e.target.hidden = true;
+  }
+});
+
+/* Hide dropdown when clicking outside */
+document.addEventListener("click", e => {
+  if (!e.target.classList.contains("smart-filter")) {
+    document.querySelectorAll("select").forEach(s => {
+      if (s.size > 1) s.hidden = true;
+    });
+  }
+});
+
   const missedForm = document.getElementById("missedForm");
   const makeupForm = document.getElementById("makeupForm");
   const pendingSection = document.getElementById("pendingSection");
@@ -242,7 +282,6 @@ document.addEventListener("DOMContentLoaded", () => {
     missedForm.classList.add("hidden");
     makeupForm.classList.add("hidden");
   };
-
 });
 </script>
 
