@@ -1,19 +1,15 @@
-/* =========================================================
-   ROOT VARIABLES
-========================================================= */
+/* ================= ROOT ================= */
 :root{
   --accent:#317efb;
   --bg:#f4f6f9;
   --card:#ffffff;
   --radius:12px;
-  --text:#111827;
-  --muted:#6b7280;
 }
 
-/* =========================================================
-   RESET & BASE
-========================================================= */
-*{ box-sizing:border-box; }
+/* ================= RESET ================= */
+*{
+  box-sizing:border-box;
+}
 
 html, body{
   margin:0;
@@ -22,18 +18,15 @@ html, body{
   overflow-x:hidden;
   font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   background:var(--bg);
-  color:var(--text);
 }
 
 .hidden{ display:none !important; }
 
-/* =========================================================
-   DASHBOARD (SMART + CLEAN)
-========================================================= */
+/* ================= DASHBOARD ================= */
 .dashboard{
   display:flex;
   justify-content:center;
-  gap:16px;
+  gap:20px;
   flex-wrap:wrap;
   padding:14px 10px;
   background:#fff;
@@ -45,34 +38,22 @@ html, body{
 
 .dashboard .card{
   background:var(--card);
-  min-width:140px;
-  padding:10px 8px;
+  padding:12px 18px;
   border-radius:10px;
+  min-width:150px;
   text-align:center;
+  font-weight:700;
   box-shadow:0 4px 12px rgba(0,0,0,.06);
-  font-size:12px;
-  font-weight:500;
-  letter-spacing:.3px;
-  color:var(--muted);
 }
 
 .dashboard .card span{
   display:block;
-  margin-top:4px;
-  font-size:20px;
-  font-weight:600;
-  line-height:1.2;
+  font-size:26px;
+  margin-top:6px;
+  color:var(--accent);
 }
 
-/* Dashboard status colors */
-.dashboard .card.total-missed span{ color:#2563eb; }
-.dashboard .card.completed span{ color:#16a34a; }
-.dashboard .card.pending span{ color:#f97316; }
-.dashboard .card.extra span{ color:#7c3aed; }
-
-/* =========================================================
-   HEADER
-========================================================= */
+/* ================= HEADER ================= */
 header{
   text-align:center;
   padding:24px 12px 28px;
@@ -80,6 +61,7 @@ header{
   color:#fff;
 }
 
+/* Title */
 header h1{
   margin:0;
   font-size:26px;
@@ -98,18 +80,14 @@ header .subtitle{
   color:#e0f7fa;
 }
 
-/* App logo */
+/* ================= MAIN LOGO (CENTER & BIG) ================= */
 .app-logo{
-  width:90px;
+  width:90px;        /* medium-big */
   height:90px;
   object-fit:contain;
   pointer-events:none;
-  animation:logoPulse 4s ease-in-out infinite;
 }
-
-/* =========================================================
-   CONTAINER
-========================================================= */
+/* ================= CONTAINER ================= */
 .container{
   max-width:860px;
   margin:18px auto;
@@ -118,9 +96,7 @@ header .subtitle{
   border-radius:var(--radius);
 }
 
-/* =========================================================
-   CONTROLS & BUTTONS
-========================================================= */
+/* ================= CONTROLS ================= */
 .controls{
   display:flex;
   gap:12px;
@@ -143,15 +119,7 @@ button{
 
 button:active{ transform:scale(.97); }
 
-.submit{
-  background:#1b9a59;
-  margin-top:12px;
-  font-weight:700;
-}
-
-/* =========================================================
-   FORMS
-========================================================= */
+/* ================= FORMS ================= */
 .form{ margin-top:14px; }
 
 .grid{
@@ -175,14 +143,20 @@ input, select{
   font-size:14px;
 }
 
+/* ================= FILTER ================= */
 .filter::placeholder{
   color:#9ca3af;
   font-size:12px;
 }
 
-/* =========================================================
-   TABLE
-========================================================= */
+/* ================= SUBMIT ================= */
+.submit{
+  background:#1b9a59;
+  margin-top:12px;
+  font-weight:700;
+}
+
+/* ================= TABLE ================= */
 .table-wrap{
   overflow-x:auto;
   margin-top:12px;
@@ -204,9 +178,7 @@ th{
   font-weight:600;
 }
 
-/* =========================================================
-   DROPDOWN STABILITY (MOBILE SAFE)
-========================================================= */
+/* ================= MOBILE DROPDOWN STABLE ================= */
 select{
   appearance:none;
   -webkit-appearance:none;
@@ -219,9 +191,11 @@ select[size]{
   -webkit-overflow-scrolling:touch;
 }
 
-/* =========================================================
-   FOOTER
-========================================================= */
+@media (max-width:600px){
+  select[size]{ font-size:16px; }
+}
+
+/* ================= FOOTER ================= */
 footer{
   margin:20px auto;
   text-align:center;
@@ -239,30 +213,11 @@ footer small{
   font-weight:600;
 }
 
-/* =========================================================
-   WATERMARK
-========================================================= */
-.form.watermark{ position:relative; }
-
-.form-watermark{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%) rotate(-30deg);
-  font-size:3rem;
-  font-weight:700;
-  color:rgba(0,0,0,.05);
-  pointer-events:none;
-  user-select:none;
-  white-space:nowrap;
-}
-
-/* =========================================================
-   MOBILE
-========================================================= */
+/* ================= MOBILE ================= */
 @media (max-width:600px){
   header h1{ font-size:22px; }
   .app-logo{ width:72px; height:72px; }
+
   .grid{ flex-direction:column; }
 
   .dashboard{
@@ -270,21 +225,19 @@ footer small{
   }
 
   .dashboard .card{
-    font-size:11px;
+    min-width:140px;
   }
 
-  .dashboard .card span{
-    font-size:18px;
+  button{
+    font-size:16px;
   }
 
-  button, input, select{
+  input, select{
     font-size:16px;
   }
 }
 
-/* =========================================================
-   DARK MODE
-========================================================= */
+/* ================= DARK MODE ================= */
 @media (prefers-color-scheme: dark){
   body{ background:#0f172a; color:#e5e7eb; }
   header{ background:#020617; }
@@ -296,9 +249,7 @@ footer small{
   }
 }
 
-/* =========================================================
-   ANIMATIONS
-========================================================= */
+/* ================= ANIMATIONS ================= */
 @keyframes footerGradient{
   0%{background-position:0% 50%}
   50%{background-position:100% 50%}
@@ -315,11 +266,128 @@ footer small{
   0%,100%{transform:scale(1)}
   50%{transform:scale(1.05)}
 }
-
-/* =========================================================
-   REMOVE DIU ICON
-========================================================= */
+/* ❌ REMOVE TOP-LEFT DIU ICON (BROWSER / FIXED) */
 link[rel="icon"],
 link[rel="apple-touch-icon"]{
   display:none !important;
+}
+/* ================= DASHBOARD TEXT SIZE & THIN STYLE ================= */
+
+.dashboard .card {
+  text-align: center;
+  padding: 10px 6px;
+}
+
+/* Dashboard label text */
+.dashboard .card {
+  font-size: 11px;          /* smaller label */
+  font-weight: 500;         /* thin */
+  letter-spacing: 0.3px;
+  color: #555;
+}
+
+/* Dashboard number */
+.dashboard .card span {
+  display: block;
+  margin-top: 4px;
+  font-size: 18px;          /* smaller count */
+  font-weight: 600;         /* semi-thin */
+  color: #111;
+}
+
+/* Mobile adjustment */
+@media (max-width: 600px) {
+  .dashboard .card {
+    font-size: 10px;
+  }
+
+  .dashboard .card span {
+    font-size: 16px;
+  }
+}
+/* ================= DASHBOARD COLOR STATUS ================= */
+
+/* Total Missed – neutral blue */
+.dashboard .card.total-missed span {
+  color: #2563eb; /* blue */
+}
+
+/* Makeup Completed – green */
+.dashboard .card:nth-child(2) span {
+  color: #16a34a; /* green */
+}
+
+/* Makeup Pending – orange */
+.dashboard .card:nth-child(3) span {
+  color: #f97316; /* orange */
+}
+
+/* Extra Classes – purple */
+.dashboard .card:nth-child(4) span {
+  color: #7c3aed; /* purple */
+}
+/* ================= DASHBOARD TEXT STYLE ================= */
+
+/* Dashboard card label text */
+.dashboard .card {
+  font-weight: 500;          /* thin */
+  font-size: 12px;           /* small */
+  letter-spacing: 0.3px;
+}
+
+/* Dashboard numbers */
+.dashboard .card span {
+  display: block;
+  font-size: 20px;           /* slightly bigger than label */
+  font-weight: 600;          /* clean, not bold-heavy */
+  margin-top: 4px;
+  line-height: 1.2;
+}
+
+/* Mobile fine tuning */
+@media (max-width: 600px) {
+  .dashboard .card {
+    font-size: 11px;
+  }
+
+  .dashboard .card span {
+    font-size: 18px;
+  }
+}
+
+/* =========================================================
+   LOCK DIU LOGO VISIBILITY
+========================================================= */
+window.addEventListener("scroll", () => {
+  const logo = document.querySelector(".diu-logo, .logo, header img");
+  if (logo) {
+    logo.style.display = "block";
+    logo.style.visibility = "visible";
+  }
+});
+
+/* === MOBILE SMART DROPDOWN FIX === */
+.smart-filter + select {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 9999;
+  background: #fff;
+  max-height: 240px;
+  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.18);
+  display: none;
+}
+
+/* show when active */
+.smart-filter.show + select {
+  display: block;
+}
+
+/* option spacing (mobile-friendly) */
+.smart-filter + select option {
+  padding: 14px;
+  font-size: 16px;
 }
