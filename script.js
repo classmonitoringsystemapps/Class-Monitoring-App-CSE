@@ -5,6 +5,103 @@ const API_URL =
   "https://script.google.com/macros/s/AKfycbxTV_Z5NP6TseOx8iT3wS6wefpK7hNt-pv0np5grnbuTiLw6h66x6XVs-vnqztAXz_aSA/exec";
 
 /* =========================================================
+   GOOGLE AUTH (EMAIL AUTO-DETECT + ROLE CONTROL)
+========================================================= */
+
+const GOOGLE_CLIENT_ID = "YOUR_CLIENT_ID.apps.googleusercontent.com";
+
+function initGoogleLogin() {
+  if (!window.google || !google.accounts) return;
+
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleLogin
+  });
+
+  google.accounts.id.renderButton(
+    document.getElementById("gSignInBtn"),
+    {
+      theme: "outline",
+      size: "large",
+      width: 250
+    }
+  );
+}
+
+function handleGoogleLogin(response) {
+  if (!response.credential) return;
+
+  const payload = JSON.parse(
+    atob(response.credential.split(".")[1])
+  );
+
+  const email = (payload.email || "").toLowerCase();
+
+  // ✅ store email once
+  localStorage.setItem("cms_user_email", email);
+
+  bootApplication();
+}
+
+/* =========================================================
+   APP BOOT (ROLE AWARE)
+========================================================= */
+function bootApplication() {
+  const email = localStorage.getItem("cms_user_email");
+
+  if (!email) return;
+
+  // Hide login, show app
+  const login = document.getElementById("loginScreen");
+  const app = document.getElementById("appRoot");
+
+  if (login) login.style.display = "none";
+  if (app) app.style.display = "block";
+
+  // 🔒 role-based dashboard behavior
+  loadDashboard();
+  loadPendingMakeup();
+}
+
+/* =========================================================
+   SESSION CHECK ON LOAD
+========================================================= */
+window.addEventListener("DOMContentLoaded", () => {
+  const email = localStorage.getItem("cms_user_email");
+
+  if (email) {
+    // already logged in
+    bootApplication();
+  } else {
+    // show login
+    const login = document.getElementById("loginScreen");
+    const app = document.getElementById("appRoot");
+
+    if (login) login.style.display = "flex";
+    if (app) app.style.display = "none";
+
+    initGoogleLogin();
+  }
+});
+
+/* =========================================================
+   ROLE & ACCESS CONTROL
+========================================================= */
+
+const ADMIN_EMAILS = [
+  "classmonitoringsystem@gmail.com",
+  "cseoffice5@daffodilvarsity.edu.bd"
+];
+
+function getCurrentUserEmail() {
+  return (localStorage.getItem("cms_user_email") || "").toLowerCase();
+}
+
+function isAdminUser() {
+  return ADMIN_EMAILS.includes(getCurrentUserEmail());
+}
+
+/* =========================================================
    MASTER LISTS
 ========================================================= */
 const TEACHERS = [
@@ -153,7 +250,16 @@ function loadDashboard() {
     .then(d => {
       if (d.status !== "success") return;
 
-      animateCount(totalMissed, d.totalMissed || 0);
+      const isAdmin = isAdminUser();
+
+      // 🔐 Missed count — ADMIN ONLY
+      if (isAdmin) {
+        animateCount(totalMissed, d.totalMissed || 0);
+      } else {
+        totalMissed.textContent = "0"; // always zero for non-admin
+      }
+
+      // ✅ Always visible for everyone
       animateCount(completed, d.completed || 0);
       animateCount(pending, d.pending || 0);
       animateCount(extraCount, d.extra || 0);
@@ -328,6 +434,7 @@ makeupForm.addEventListener("submit", async e => {
 /* =========================================================
    PENDING MAKEUP
 ========================================================= */
+
 function updateMakeup(row) {
   const statusEl = document.getElementById(`status_${row}`);
   const remarksEl = document.getElementById(`remarks_${row}`);
@@ -353,6 +460,7 @@ function updateMakeup(row) {
     .catch(console.error);
 }
 
+/* ================= LOAD PENDING MAKEUP ================= */
 function loadPendingMakeup() {
   fetch(`${API_URL}?action=get_pending_makeup`)
     .then(r => r.json())
@@ -382,7 +490,7 @@ function loadPendingMakeup() {
   <td>${r.makeupRoom}</td>
   <td>
     <select id="status_${r.row}">
-      <option value="" disabled selected hidden>${r.status}</option>
+      <option value="${r.status}" selected>${r.status}</option>
       <option value="Pending">Pending</option>
       <option value="Completed">Completed</option>
     </select>
@@ -399,8 +507,31 @@ function loadPendingMakeup() {
           `
         );
       });
+
+      applyPendingSearch(); // 🔑 re-bind search after load
     })
     .catch(console.error);
+}
+
+/* ================= SMART SEARCH (TEACHER OR ROOM) ================= */
+function applyPendingSearch() {
+  const searchInput = document.getElementById("pendingTeacherSearch");
+  if (!searchInput) return;
+
+  searchInput.oninput = function () {
+    const q = this.value.toLowerCase().trim();
+    const rows = document.querySelectorAll("#pendingTable tbody tr");
+
+    rows.forEach(row => {
+      const teacher = row.children[3]?.textContent.toLowerCase() || "";
+      const room = row.children[6]?.textContent.toLowerCase() || "";
+
+      row.style.display =
+        teacher.includes(q) || room.includes(q)
+          ? ""
+          : "none";
+    });
+  };
 }
 
 /* =========================================================
@@ -483,3 +614,16 @@ function bindSmartDropdown(filterId, selectId) {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
 }
+/* =========================================================
+   FORCE MISSED COUNT TO ZERO (TEMP LOCK)
+========================================================= */
+function lockMissedCount() {
+  const missedEl = document.getElementById("totalMissed");
+  if (missedEl) missedEl.textContent = "0";
+}
+
+/* run immediately */
+lockMissedCount();
+
+/* re-lock after any async update */
+setInterval(lockMissedCount, 500);
