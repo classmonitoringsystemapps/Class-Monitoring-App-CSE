@@ -365,29 +365,3 @@ window.addEventListener("scroll", () => {
     logo.style.visibility = "visible";
   }
 });
-
-/* === MOBILE SMART DROPDOWN FIX === */
-.smart-filter + select {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  z-index: 9999;
-  background: #fff;
-  max-height: 240px;
-  overflow-y: auto;
-  border-radius: 12px;
-  box-shadow: 0 12px 28px rgba(0,0,0,.18);
-  display: none;
-}
-
-/* show when active */
-.smart-filter.show + select {
-  display: block;
-}
-
-/* option spacing (mobile-friendly) */
-.smart-filter + select option {
-  padding: 14px;
-  font-size: 16px;
-}
