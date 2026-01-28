@@ -16,7 +16,8 @@
 <body>
 
 <!-- ================= DASHBOARD ================= -->
-<section class="dashboard">
+<div id="appRoot" style="display:none;">
+  <section class="dashboard">
   <div class="card total-missed">
     <span>Total Missed</span>
     <strong id="totalMissed">0</strong>
@@ -282,6 +283,70 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
 </script>
+<script>
+/* =========================================================
+   DASHBOARD MISSED COUNT ACCESS CONTROL
+========================================================= */
+(function () {
+  const ALLOWED_EMAILS = [
+    "classmonitoringsystem@gmail.com",
+    "cseoffice5@daffodilvarsity.edu.bd"
+  ];
+
+  function controlMissedCount() {
+    const missedEl = document.getElementById("totalMissed");
+    if (!missedEl) return;
+
+    const userEmail = (localStorage.getItem("cms_user_email") || "").toLowerCase();
+
+    if (ALLOWED_EMAILS.includes(userEmail)) {
+      // ✅ Admin → show real count
+      missedEl.style.display = "block";
+    } else {
+      // ❌ Others → hide number only
+      missedEl.textContent = "0";
+      missedEl.style.display = "none";
+    }
+  }
+
+  // Run on load
+  document.addEventListener("DOMContentLoaded", controlMissedCount);
+
+  // Re-run AFTER dashboard updates (important)
+  const originalLoadDashboard = window.loadDashboard;
+  window.loadDashboard = function () {
+    if (originalLoadDashboard) originalLoadDashboard();
+    setTimeout(controlMissedCount, 50);
+  };
+})();
+</script>
+<script>
+localStorage.setItem(
+  "cms_user_email",
+  "classmonitoringsystem@gmail.com"
+);
+</script>
+<script>
+localStorage.setItem(
+  "cms_user_email",
+  "classmonitoringsystem@gmail.com"
+);
+
+// OR test other user
+// localStorage.setItem("cms_user_email", "someone@othermail.com");
+</script>
+
+<!-- ================= LOGIN SCREEN ================= -->
+<div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;background:#fff;padding:30px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.15);max-width:320px;width:100%;">
+    <h2 style="margin-bottom:8px;">Class Monitoring System</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:18px;">
+      Sign in with DIU Email
+    </p>
+
+    <div id="gSignInBtn"></div>
+  </div>
+</div>
 
 </body>
 </html>
