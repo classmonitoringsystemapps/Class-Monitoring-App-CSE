@@ -2,7 +2,7 @@
    CONFIG
 ========================================================= */
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbzGfXPknCOeDJT1xiDDjGTg-aPAeoJHdKIwMcJ8lR0U4yXG49bpyYZRlaVzPCakHNYHhQ/exec";
+  "https://script.google.com/macros/s/AKfycby5mgVs6WuLVYSP6ii2sApptTLnv2UUdasJkaNt73rl6fBXFKk-V9sKE1BnUwYKIz3mOQ/exec";
 
 /* ---------- HELPERS ---------- */
 function qs(sel) { return document.querySelector(sel); }
@@ -377,3 +377,4 @@ function enableTeacherSelect2() {
     }
   });
 }
+
