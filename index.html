@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Class Monitoring System</title>
 
-  <!-- ===== PWA CORE ===== -->
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0A7E4A">
 
@@ -16,9 +15,20 @@
 
 <body>
 
-<!-- ================= DASHBOARD ================= -->
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;background:#fff;padding:30px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.15);max-width:320px;width:100%;">
+    <h2>Class Monitoring System</h2>
+    <p style="font-size:14px;color:#555;">Sign in with DIU Email</p>
+    <div id="gSignInBtn"></div>
+  </div>
+</div>
+
+<!-- ================= APP ROOT ================= -->
 <div id="appRoot" style="display:none;">
-  <section class="dashboard">
+
+<!-- ================= DASHBOARD ================= -->
+<section class="dashboard">
   <div class="card total-missed">
     <span>Total Missed</span>
     <strong id="totalMissed">0</strong>
@@ -43,124 +53,89 @@
 <!-- ================= HEADER ================= -->
 <header>
   <div class="logo-wrap">
-    <img src="icon-512.svg" alt="App Logo" class="app-logo">
+    <img src="icon-512.svg" class="app-logo" alt="Logo">
   </div>
-  <h1>Class Monitoring App</h1>
-  <p class="subtitle">Missed &amp; Makeup Class Entry — CSE-DIU</p>
+  <h1>Class Monitoring System</h1>
+  <p class="subtitle">Missed and Makeup Class Schedule & Classroom Booking—CSE</p>
 </header>
+
+<!-- ================= CONTROLS ================= -->
+<div class="controls">
+  <button id="btn-missed">Missed Class Entry</button>
+  <button id="btn-makeup">Makeup Class Entry</button>
+  <button id="btn_pending">Pending Makeup</button>
+  <button id="btn_empty">Empty Room Check</button>
+</div>
 
 <!-- ================= MAIN ================= -->
 <main class="container">
 
-  <!-- ================= CONTROLS ================= -->
-  <div class="controls">
-    <button type="button" id="btn-missed">Missed Class Entry</button>
-    <button type="button" id="btn-makeup">Makeup Class Entry</button>
-    <button type="button" id="btn_pending">Pending Makeup</button>
-  </div>
-
-  <!-- ================= CLASS ENTRY (COMBINED SLOT) ================= -->
-<section class="class-entry watermark">
-
-<!-- ================= MISSED CLASS ================= -->
-<form id="missedForm" class="form hidden watermark" autocomplete="off" novalidate>
+<!-- ================= MISSED ================= -->
+<form id="missedForm" class="form hidden" autocomplete="off">
   <h2>Missed Class Entry</h2>
 
   <div class="grid">
-    <label>Date
-      <input type="date" id="m_date" required>
-    </label>
-
+    <label>Date <input type="date" id="m_date" required></label>
     <label>Department
-      <input type="text" class="smart-filter" data-target="m_dept" placeholder="Search department…">
-      <select id="m_dept" required></select>
+      <select id="m_dept">
+        <option value="">Select</option>
+        <option value="CSE">CSE</option>
+        <option value="Others">Others</option>
+      </select>
     </label>
   </div>
 
   <div class="grid">
-    <label>Course Code
-      <input type="text" class="smart-filter" data-target="m_course" placeholder="Search course…">
-      <select id="m_course" required></select>
-    </label>
-
-    <label>Room
-      <input type="text" class="smart-filter" data-target="m_room" placeholder="Search room…">
-      <select id="m_room"></select>
-    </label>
+    <label>Course <select id="m_course"></select></label>
+    <label>Room <select id="m_room"></select></label>
   </div>
 
   <div class="grid">
-    <label>Time Slot
-      <input type="text" class="smart-filter" data-target="m_time" placeholder="Search time…">
-      <select id="m_time"></select>
-    </label>
-
-    <label>Teacher Initial
-      <input type="text" class="smart-filter" data-target="m_teacher" placeholder="Search teacher…">
-      <select id="m_teacher" required></select>
-    </label>
+    <label>Time <select id="m_time"></select></label>
+    <label>Teacher <select id="m_teacher"></select></label>
   </div>
 
   <label>Reason
-    <select id="m_reason" required>
-      <option value="">Select reason</option>
+    <select id="m_reason">
+      <option value="">Select</option>
       <option>Leave</option>
       <option>Sick</option>
-      <option>Student Absent</option>
-      <option>Absent</option>
       <option>Meeting</option>
-      <option>Both are Absent</option>
-      <option>Due to an Emergency</option>
+      <option>Absent</option>
+      <option>Emergency</option>
     </select>
   </label>
 
-  <button type="submit" class="submit">Submit Missed Class</button>
+  <button class="submit">Submit Missed</button>
 </form>
 
-<!-- ================= MAKEUP CLASS ================= -->
-<form id="makeupForm" class="form hidden watermark" autocomplete="off" novalidate>
+<!-- ================= MAKEUP ================= -->
+<form id="makeupForm" class="form hidden" autocomplete="off">
   <h2>Makeup Class Entry</h2>
 
   <div class="grid">
-    <label>Schedule Date
-      <input type="date" id="k_schedule" required>
-    </label>
-
+    <label>Schedule Day <input type="date" id="k_schedule"></label>
     <label>Department
-      <input type="text" class="smart-filter" data-target="k_dept" placeholder="Search department…">
-      <select id="k_dept" required></select>
+      <select id="k_dept">
+        <option value="">Select</option>
+        <option value="CSE">CSE</option>
+        <option value="Others">Others</option>
+      </select>
     </label>
   </div>
 
   <div class="grid">
-    <label>Course Code
-      <input type="text" class="smart-filter" data-target="k_course" placeholder="Search course…">
-      <select id="k_course" required></select>
-    </label>
-
-    <label>Teacher Initial
-      <input type="text" class="smart-filter" data-target="k_teacher" placeholder="Search teacher…">
-      <select id="k_teacher" required></select>
-    </label>
+    <label>Course <select id="k_course"></select></label>
+    <label>Teacher <select id="k_teacher"></select></label>
   </div>
 
   <div class="grid">
-    <label>Makeup Date
-      <input type="date" id="k_date" required>
-    </label>
-
-    <label>Makeup Time
-      <input type="text" class="smart-filter" data-target="k_time" placeholder="Search time…">
-      <select id="k_time" required></select>
-    </label>
+    <label>Makeup Date <input type="date" id="k_date"></label>
+    <label>Time <select id="k_time"></select></label>
   </div>
 
   <div class="grid">
-    <label>Makeup Room
-      <input type="text" class="smart-filter" data-target="k_room" placeholder="Search room…">
-      <select id="k_room" required></select>
-    </label>
-
+    <label>Room <select id="k_room"></select></label>
     <label>Status
       <select id="k_status">
         <option>Pending</option>
@@ -172,182 +147,119 @@
   <input type="text" id="k_remarks" placeholder="If completed, provide attendance / recording link">
   <button type="submit" class="submit">Save Makeup Class</button>
 </form>
-  <!-- ================= PENDING ================= -->
-  <section id="pendingSection" class="form hidden">
-    <h2>Pending Makeup Classes</h2>
 
-    <input
-      id="pendingTeacherSearch"
-      class="filter"
-      placeholder="Search by Teacher Initial…">
+<!-- ================= PENDING ================= -->
+<section id="pendingSection" class="form hidden">
+  <h2>Pending Makeup Classes</h2>
 
-    <div class="table-wrap">
-      <table id="pendingTable">
-        <thead>
-          <tr>
-            <th>Schedule</th>
-            <th>Dept</th>
-            <th>Course</th>
-            <th>Teacher</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Room</th>
-            <th>Status</th>
-            <th>Remarks</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
+  <input
+    id="pendingTeacherSearch"
+    class="filter"
+    placeholder="Search by Teacher Initial…">
+
+  <div class="table-wrap">
+    <table id="pendingTable">
+      <thead>
+        <tr>
+          <th>Schedule</th>
+          <th>Dept</th>
+          <th>Course</th>
+          <th>Teacher</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Room</th>
+          <th>Status</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= EMPTY ROOM CHECK ================= -->
+<section id="emptyRoomSection" class="form hidden">
+  <h2>Available (Empty) Rooms</h2>
+
+  <div style="margin-bottom: 12px; display:flex; gap:8px; align-items:center;">
+    <input type="text" id="emptyRoomSearch" placeholder="Search room or time..."
+           style="padding:6px; width:250px;">
+    <button onclick="searchEmptyRooms()">Search</button>
+    <button onclick="loadEmptyRooms()">Reset</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="emptyRoomTable">
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Time Slot</th>
+          <th>Room</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4" style="text-align:center;">
+            Click "Empty Room Check" to load data…
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
 </main>
 
 <!-- ================= FOOTER ================= -->
 <footer>
-  <small>
-    Developed by the Class Monitoring Committee of the CSE Department
-  </small>
+  <small>Developed by Department of CSE—DIU</small>
 </footer>
 
-<!-- ================= SCRIPTS ================= -->
+</div><!-- appRoot -->
+
+<!-- ================= MAIN SCRIPT ================= -->
 <script src="script.js" defer></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-/* =========================================================
-   SMART SEARCH DROPDOWN (UNIVERSAL)
-========================================================= */
-document.addEventListener("input", e => {
-  if (!e.target.classList.contains("smart-filter")) return;
-
-  const query = e.target.value.toLowerCase();
-  const selectId = e.target.dataset.target;
-  const select = document.getElementById(selectId);
-
-  [...select.options].forEach(opt => {
-    opt.hidden = !opt.text.toLowerCase().includes(query);
-  });
-
-  select.hidden = false;
-});
-
-/* Auto-fill input when option selected */
-document.addEventListener("change", e => {
-  if (e.target.tagName !== "SELECT") return;
-
-  const filter = document.querySelector(
-    `.smart-filter[data-target="${e.target.id}"]`
-  );
-
-  if (filter) {
-    filter.value = e.target.value;
-    e.target.hidden = true;
-  }
-});
-
-/* Hide dropdown when clicking outside */
-document.addEventListener("click", e => {
-  if (!e.target.classList.contains("smart-filter")) {
-    document.querySelectorAll("select").forEach(s => {
-      if (s.size > 1) s.hidden = true;
-    });
-  }
-});
 
   const missedForm = document.getElementById("missedForm");
   const makeupForm = document.getElementById("makeupForm");
   const pendingSection = document.getElementById("pendingSection");
+  const emptyRoomSection = document.getElementById("emptyRoomSection");
 
-  document.getElementById("btn-missed").onclick = () => {
-    missedForm.classList.remove("hidden");
-    makeupForm.classList.add("hidden");
-    pendingSection.classList.add("hidden");
-  };
+  btn("btn-missed", () => show(missedForm));
+  btn("btn-makeup", () => show(makeupForm));
+  btn("btn_pending", () => show(pendingSection));
+  btn("btn_empty", () => {
+    show(emptyRoomSection);
+    loadEmptyRooms();   // load only when clicked
+  });
 
-  document.getElementById("btn-makeup").onclick = () => {
-    makeupForm.classList.remove("hidden");
-    missedForm.classList.add("hidden");
-    pendingSection.classList.add("hidden");
-  };
+  function btn(id, fn){ document.getElementById(id).onclick = fn; }
 
-  document.getElementById("btn_pending").onclick = () => {
-    pendingSection.classList.remove("hidden");
-    missedForm.classList.add("hidden");
-    makeupForm.classList.add("hidden");
-  };
+  function show(el){
+    [missedForm, makeupForm, pendingSection, emptyRoomSection]
+      .forEach(x=>x.classList.add("hidden"));
+    el.classList.remove("hidden");
+  }
+
+  // >>>>>>> ADD THESE TWO LINES <<<<<<<<
+  document.getElementById("pendingTeacherSearch")
+    .addEventListener("input", filterPendingTable);
+  // >>>>>>> END ADDITION <<<<<<<<
+
 });
 </script>
 
+
+<!-- ================= SERVICE WORKER ================= -->
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
 </script>
-<script>
-/* =========================================================
-   DASHBOARD MISSED COUNT ACCESS CONTROL
-========================================================= */
-(function () {
-  const ALLOWED_EMAILS = [
-    "classmonitoringsystem@gmail.com",
-    "cseoffice5@daffodilvarsity.edu.bd"
-  ];
-
-  function controlMissedCount() {
-    const missedEl = document.getElementById("totalMissed");
-    if (!missedEl) return;
-
-    const userEmail = (localStorage.getItem("cms_user_email") || "").toLowerCase();
-
-    if (ALLOWED_EMAILS.includes(userEmail)) {
-      // ✅ Admin → show real count
-      missedEl.style.display = "block";
-    } else {
-      // ❌ Others → hide number only
-      missedEl.textContent = "0";
-      missedEl.style.display = "none";
-    }
-  }
-
-  // Run on load
-  document.addEventListener("DOMContentLoaded", controlMissedCount);
-
-  // Re-run AFTER dashboard updates (important)
-  const originalLoadDashboard = window.loadDashboard;
-  window.loadDashboard = function () {
-    if (originalLoadDashboard) originalLoadDashboard();
-    setTimeout(controlMissedCount, 50);
-  };
-})();
-</script>
-<script>
-localStorage.setItem(
-  "cms_user_email",
-  "classmonitoringsystem@gmail.com"
-);
-</script>
-<script>
-localStorage.setItem(
-  "cms_user_email",
-  "classmonitoringsystem@gmail.com"
-);
-
-// OR test other user
-// localStorage.setItem("cms_user_email", "someone@othermail.com");
-</script>
-
-<!-- ================= LOGIN SCREEN ================= -->
-<div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
-  <div style="text-align:center;background:#fff;padding:30px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.15);max-width:320px;width:100%;">
-    <h2 style="margin-bottom:8px;">Class Monitoring System</h2>
-    <p style="font-size:14px;color:#555;margin-bottom:18px;">
-      Sign in with DIU Email
-    </p>
-
-    <div id="gSignInBtn"></div>
-  </div>
-</div>
 
 </body>
 </html>
