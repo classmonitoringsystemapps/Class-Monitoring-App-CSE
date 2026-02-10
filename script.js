@@ -2,9 +2,11 @@
    CONFIG
 ========================================================= */
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbwKKQwqUhtdu0-88gUPF5i8YDcDyj15oJoAaA7_inQNk3YZexf9SnO1spHzFi23_naVjw/exec";
+  "https://script.google.com/macros/s/AKfycby4rctkj6vZXLEUFdiwuSM0f7Wldpx-JHPW9k_IgtngAfh1uzSfUcYSwFuT_pQQ7m9iUA/exec";
 
-/* ---------- HELPERS ---------- */
+/* =========================================================
+   HELPERS
+========================================================= */
 function qs(sel) { return document.querySelector(sel); }
 function qid(id) { return document.getElementById(id); }
 
@@ -27,9 +29,44 @@ function formatDateISO(d) {
 }
 
 /* =========================================================
+   ONE-TIME EMAIL PROMPT (STORED LOCALLY)
+========================================================= */
+async function ensureUserEmail() {
+  let email = localStorage.getItem("loggedEmail");
+
+  if (!email) {
+    email = prompt("Enter your email to use the system:");
+    if (!email) {
+      alert("Email is required to use the system.");
+      throw new Error("No email provided");
+    }
+    localStorage.setItem("loggedEmail", email);
+  }
+
+  window.LOGGED_EMAIL = email.toLowerCase().trim();
+}
+
+/* =========================================================
+   CHECK MISSED ENTRY PERMISSION
+========================================================= */
+async function checkMissedPermission() {
+  const res = await fetch(
+    `${API_URL}?action=get_missed_permission&email=${encodeURIComponent(window.LOGGED_EMAIL)}`
+  ).then(r => r.json());
+
+  if (res.status !== "success") {
+    alert("You are NOT authorized for Missed Entry.");
+    qid("missedForm")?.classList.add("hidden");
+  }
+}
+
+/* =========================================================
    BOOT
 ========================================================= */
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
+
+  await ensureUserEmail();
+  await checkMissedPermission();
 
   if (qid("appRoot")) qid("appRoot").style.display = "block";
   if (qid("loginScreen")) qid("loginScreen").style.display = "none";
@@ -39,33 +76,8 @@ window.addEventListener("DOMContentLoaded", () => {
   loadPendingMakeup();
   bindForms();
 
-  // ✅ Enable teacher search (Select2)
-  enableTeacherSelect2();
-
-  // ✅ NEW — Check Missed Class Permission by Email
-  checkMissedPermission();
-
   qid("pendingTeacherSearch")?.addEventListener("input", filterPendingTable);
 });
-
-/* =========================================================
-   CHECK MISSED CLASS PERMISSION (EMAIL BASED)
-========================================================= */
-async function checkMissedPermission() {
-  try {
-    const res = await fetch(`${API_URL}?action=get_missed_permission`);
-    const d = await res.json();
-
-    const submitBtn = document.querySelector("#missedForm .submit");
-
-    if (!d.allowed) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Not Authorized for Missed Entry";
-    }
-  } catch (e) {
-    console.error("Permission check failed", e);
-  }
-}
 
 /* =========================================================
    DASHBOARD
@@ -128,13 +140,14 @@ function bindForms() {
 }
 
 /* =========================================================
-   SAVE MISSED  (EMAIL ACCESS FIXED)
+   SAVE MISSED
 ========================================================= */
 async function submitMissed(e) {
   e.preventDefault();
 
   const payload = new URLSearchParams({
     action: "save_missed",
+    email: window.LOGGED_EMAIL,
     date: formatDateISO(qid("m_date").value),
     department: qid("m_dept").value,
     course: qid("m_course").value,
@@ -152,7 +165,7 @@ async function submitMissed(e) {
     e.target.reset();
     loadDashboard();
   } else {
-    alert(res.message || "Not authorized or failed to save.");
+    alert(res.message || "Not Authorized for Missed Entry");
   }
 }
 
@@ -261,7 +274,7 @@ function updateMakeup(row) {
     .then(res => {
       if (res.status === "success") {
 
-        alert(res.message || "Updated successfully");
+        alert("Updated successfully");
 
         if (status === "Completed") {
           const tr = document.getElementById(`row_${row}`);
@@ -351,34 +364,3 @@ function autoFillMakeup(day, time, room) {
   qid("k_room").value = room;
   alert(`Selected: ${day} | ${time} | ${room}`);
 }
-
-/* =========================================================
-   CHARACTER-WISE TEACHER SEARCH (SELECT2)
-========================================================= */
-function enableTeacherSelect2() {
-  if (!window.jQuery) return;
-
-  $("#m_teacher, #k_teacher").select2({
-    width: "100%",
-    placeholder: "Type teacher initial...",
-    allowClear: true,
-    minimumInputLength: 1,
-    matcher: function (params, data) {
-      if ($.trim(params.term) === "") return data;
-      if (!data.text) return null;
-
-      const term = params.term.toLowerCase();
-      const text = data.text.toLowerCase();
-
-      if (text.indexOf(term) > -1) {
-        return data;
-      }
-      return null;
-    }
-  });
-}
-
-
-
-
-
