@@ -4,6 +4,17 @@
 const API_URL =
   "https://script.google.com/macros/s/AKfycby4rctkj6vZXLEUFdiwuSM0f7Wldpx-JHPW9k_IgtngAfh1uzSfUcYSwFuT_pQQ7m9iUA/exec";
 
+// ========== USER LOGIN (ONE TIME) ==========
+let userEmail = localStorage.getItem("loggedEmail");
+
+if (!userEmail) {
+  userEmail = prompt("Enter your official email to use the system:");
+  if (userEmail) {
+    localStorage.setItem("loggedEmail", userEmail.trim().toLowerCase());
+  }
+}
+
+
 /* =========================================================
    HELPERS
 ========================================================= */
@@ -50,13 +61,27 @@ async function ensureUserEmail() {
    CHECK MISSED ENTRY PERMISSION
 ========================================================= */
 async function checkMissedPermission() {
-  const res = await fetch(
-    `${API_URL}?action=get_missed_permission&email=${encodeURIComponent(window.LOGGED_EMAIL)}`
-  ).then(r => r.json());
+  const email = localStorage.getItem("loggedEmail") || "";
 
-  if (res.status !== "success") {
-    alert("You are NOT authorized for Missed Entry.");
-    qid("missedForm")?.classList.add("hidden");
+  try {
+    const res = await fetch(
+      `${API_URL}?action=check_missed_permission&email=${encodeURIComponent(email)}`
+    );
+
+    const data = await res.json();
+
+    if (!data.authorized) {
+      const btn = document.getElementById("missedSubmitBtn");
+      if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = "0.6";
+        btn.style.cursor = "not-allowed";
+      }
+
+      alert("You are NOT authorized for Missed Class Entry. You can still do Makeup.");
+    }
+  } catch (err) {
+    console.error("Permission check failed", err);
   }
 }
 
@@ -94,6 +119,30 @@ function loadDashboard() {
       qid("extraCount").textContent = d.extra || 0;
     })
     .catch(console.error);
+}
+
+async function checkMissedPermission() {
+  const email = localStorage.getItem("loggedEmail") || "";
+
+  try {
+    const res = await fetch(
+      `${API_URL}?action=check_missed_permission&email=${encodeURIComponent(email)}`
+    );
+    const data = await res.json();
+
+    if (!data.authorized) {
+      // DISABLE MISSED ENTRY BUTTON
+      const btn = document.getElementById("missedSubmitBtn");
+      if (btn) {
+        btn.disabled = true;
+        btn.title = "You are not authorized for Missed Entry";
+      }
+
+      alert("You are NOT authorized for Missed Class Entry. You can still do Makeup.");
+    }
+  } catch (err) {
+    console.error("Permission check failed", err);
+  }
 }
 
 /* =========================================================
