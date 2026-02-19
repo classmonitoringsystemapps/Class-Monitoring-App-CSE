@@ -358,3 +358,41 @@ footer small{
     margin-top: 2px !important;
   }
 }
+/* ================= ROLE SELECT ================= */
+
+.role-select {
+  text-align:center;
+  margin:40px 0;
+}
+
+.role-grid {
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.role-card {
+  background:#fff;
+  padding:25px;
+  border-radius:14px;
+  border:2px solid #eaeaea;
+  width:220px;
+  font-size:18px;
+  cursor:pointer;
+  transition:0.3s;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.role-card span {
+  font-size:13px;
+  color:#666;
+}
+
+.role-card:hover {
+  border-color:#0A7E4A;
+  transform:translateY(-4px);
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
