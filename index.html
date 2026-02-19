@@ -59,12 +59,29 @@
   <p class="subtitle">Missed and Makeup Class Schedule & Classroom Booking—CSE</p>
 </header>
 
+<!-- ================= ROLE SELECT ================= -->
+<section id="roleSelect" class="role-select">
+  <h2>Select User Panel</h2>
+  <div class="role-grid">
+    <button id="roleOffice" class="role-card">
+      🏢 Office Panel
+      <span>Missed Entry + Dashboard</span>
+    </button>
+
+    <button id="roleFaculty" class="role-card">
+      👨‍🏫 Faculty Panel
+      <span>Makeup + Pending + Empty Room</span>
+    </button>
+  </div>
+</section>
+
 <!-- ================= CONTROLS ================= -->
-<div class="controls">
+<div class="controls hidden" id="controlPanel">
   <button id="btn-missed">Missed Class Entry</button>
   <button id="btn-makeup">Makeup Class Entry</button>
   <button id="btn_pending">Pending Makeup</button>
   <button id="btn_empty">Empty Room Check</button>
+  <button id="btnBackRole">⬅ Back</button>
 </div>
 
 <!-- ================= MAIN ================= -->
@@ -102,11 +119,14 @@
       <option>Sick</option>
       <option>Meeting</option>
       <option>Absent</option>
+      <option>Teacher Present Students Absent</option>
       <option>Emergency</option>
     </select>
   </label>
 
-  <button class="submit" id="missedSubmitBtn">Submit Missed</button>
+  <button type="submit" class="submit" id="missedSubmitBtn">
+  Submit Missed
+</button>
 </form>
 
 <!-- ================= MAKEUP ================= -->
@@ -263,4 +283,3 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
-
