@@ -2,7 +2,7 @@
    CONFIG
 ========================================================= */
 const API_URL =
-"https://script.google.com/macros/s/AKfycby3piy1lfDNrcLHVSQwCZvdb0UfVGtqsLztPfREniv1kszUJgx7VSfCcQHeJyHa_OPWzw/exec";
+"https://script.google.com/macros/s/AKfycbwo9WvDXsXPOSyceb8qA9szcqzcBaBhndQKsK_0vs1AYiuoUJ8DwKgEJJXNrAaoaNgEvg/exec";
 
 /* =========================================================
    HELPERS
@@ -358,3 +358,4 @@ function autoFillMakeup(day,time,room){
   qid("k_room").value=room;
   alert(`Selected: ${day} | ${time} | ${room}`);
 }
+
