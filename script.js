@@ -2,7 +2,7 @@
    CONFIG
 ========================================================= */
 const API_URL =
-"https://script.google.com/macros/s/AKfycbyaXhP3wFTgG4bAWjHIbmaAa4S3Wb_JLPwcDnDcvCG9Ia9mm6tZD6OQXkz-xO5jReUytQ/exec";
+"https://script.google.com/macros/s/AKfycbyqTtFAiLGVi8WgoXd5fOXMkGUNH9FXK5X75U_p8_UFpEGsLwLng2qEr9SNjtigIojxWg/exec";
 
 /* =========================================================
    HELPERS
